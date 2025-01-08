@@ -17,7 +17,7 @@ jobs:
         with:
           script: |
             const runs = await github.rest.actions.listWorkflowRunsForRepo({
-              owner: context.repo.owner, repo: context.repo.repo, per_page: 2,
+              owner: context.repo.owner, repo: context.repo.repo, per_page: 3,
             });
             if (!runs.data.workflow_runs || runs.data.workflow_runs.length === 0) {
               core.setFailed("No workflow runs found.");
