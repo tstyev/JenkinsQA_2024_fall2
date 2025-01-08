@@ -28,9 +28,9 @@ jobs:
               core.setFailed("No successful CI workflow runs found with name 'CI'.");
             } else {
               core.info(`Found CI workflow run with ID: ${ciRun.id}`);
-            core.setOutput("run_id", ciRun.id);
-          }
-        }
+              core.setOutput("run_id", ciRun.id);
+            }
+            }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
