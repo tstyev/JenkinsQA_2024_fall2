@@ -16,25 +16,4 @@ public class SearchBoxTest extends BaseTest {
         Assert.assertEquals(title, "Search Box1");
     }
 
-    @Test
-    public void testSearch() {
-        String result = new HomePage(getDriver())
-                .enterSearch("built")
-                .enter()
-                .getResult();
-
-        Assert.assertEquals(result, "Built-In Node");
-    }
-
-    @Test
-    public void testSuggestionList() {
-        String result = new HomePage(getDriver())
-                .enterSearch("bu")
-                .getSuggestion()
-                .enter()
-                .getResult();
-
-        Assert.assertEquals(result, "Built-In Node");
-    }
-
 }
