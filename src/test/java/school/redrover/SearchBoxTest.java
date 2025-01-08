@@ -16,4 +16,13 @@ public class SearchBoxTest extends BaseTest {
         Assert.assertEquals(title, "Search Box");
     }
 
+    @Test
+    public void testVerifyTitleSearchBoxLink2() {
+        String title = new HomePage(getDriver())
+                .gotoSearchBox()
+                .getTitle();
+
+        Assert.assertEquals(title, "Search Box2");
+    }
+
 }
