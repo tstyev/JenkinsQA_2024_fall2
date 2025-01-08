@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Find the latest successful CI run
+      - name: Find the latest CI run
         uses: actions/github-script@v6
         id: find_ci_run
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Send Telegram Notification
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          REPORT_LINK="https://redroverschool.github.io/JenkinsQA_2024_fall2/$RUN_NUMBER/"
+          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/$RUN_NUMBER/"
           
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
