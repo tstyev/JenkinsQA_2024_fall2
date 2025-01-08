@@ -19,8 +19,17 @@ jobs:
             const runs = await github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner, repo: context.repo.repo, per_page: 2,
             });
-            const ciRun = runs.data.workflow_runs.find(run => run.name === "CI");
+            if (!runs.data.workflow_runs || runs.data.workflow_runs.length === 0) {
+              core.setFailed("No workflow runs found.");
+            } else {
+              const ciRun = runs.data.workflow_runs.find(run => run.name === "CI");
+
+            if (!ciRun) {
+              core.setFailed("No successful CI workflow runs found with name 'CI'.");
+            } else {
+              core.info(`Found CI workflow run with ID: ${ciRun.id}`);
             core.setOutput("run_id", ciRun.id);
+          }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
