@@ -19,18 +19,8 @@ jobs:
             const runs = await github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner, repo: context.repo.repo, per_page: 3,
             });
-            if (!runs.data.workflow_runs || runs.data.workflow_runs.length === 0) {
-              core.setFailed("No workflow runs found.");
-            } else {
-              const ciRun = runs.data.workflow_runs.find(run => run.name === "CI");
-
-              if (!ciRun) {
-                core.setFailed("No successful CI workflow runs found with name 'CI'.");
-              } else {
-                core.info(`Found CI workflow run with ID: ${ciRun.id}`);
-              core.setOutput("run_id", ciRun.id);
-              }
-            }
+            const ciRun = runs.data.workflow_runs.find(run => run.name === "CI");
+            core.setOutput("run_id", ciRun.id);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,7 +40,7 @@ jobs:
       - name: Send Telegram Notification
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          REPORT_LINK="https://redroverschool.github.io/JenkinsQA_2024_fall/$RUN_NUMBER/"
+          REPORT_LINK="https://redroverschool.github.io/JenkinsQA_2024_fall2/$RUN_NUMBER/"
           
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
