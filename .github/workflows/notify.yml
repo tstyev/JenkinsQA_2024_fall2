@@ -26,6 +26,18 @@ jobs:
               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             const latestCiRun = ciRuns[0];
             core.setOutput("run_id", latestCiRun.id);
+            
+            // Получаем информацию о коммите для CI run
+            const commitSHA = latestCiRun.head_sha;
+            const commitDetails = await github.rest.repos.getCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: commitSHA
+            });
+            
+            // Получаем информацию об авторе коммита
+            const prUser = commitDetails.data.committer.login;
+            core.setOutput("pr_user", prUser);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,10 +62,9 @@ jobs:
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           
-          PR_URL="${{ steps.find_ci_run.outputs.pr_url }}"
           PR_USER="${{ steps.find_ci_run.outputs.pr_user }}"
           
-          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER%0A🔗 PR: [${PR_URL}]%0A👤 Автор: [${PR_USER}](https://github.com/${PR_USER})"
+          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER%0A👤 Автор: [${PR_USER}](https://github.com/${PR_USER})"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
