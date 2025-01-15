@@ -50,9 +50,12 @@ jobs:
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           
-          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER"
+          PR_URL="${{ steps.find_ci_run.outputs.pr_url }}"
+          PR_USER="${{ steps.find_ci_run.outputs.pr_user }}"
+          
+          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER%0A👤 Автор PR: [${PR_USER}](${PR_URL})"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
-            -d chat_id="@team_jenkins_2024_fall" \
+            -d chat_id="secrets.TELEGRAM_CHAT_ID" \
             -d text="${MESSAGE}" \
             -d parse_mode="MarkdownV2"
