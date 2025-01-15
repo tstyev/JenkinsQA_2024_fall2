@@ -27,16 +27,20 @@ jobs:
             const latestCiRun = ciRuns[0];
             core.setOutput("run_id", latestCiRun.id);
             
-            // Получаем информацию о коммите для CI run
-            const commitSHA = latestCiRun.head_sha;
-            const commitDetails = await github.rest.repos.getCommit({
+            // Извлекаем PR по коммиту
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: commitSHA
+              commit_sha: commitSHA
             });
             
-            // Получаем информацию об авторе коммита
-            const prUser = commitDetails.data.author ? commitDetails.data.author.login : commitDetails.data.committer.login;
+            let prUser = 'unknown';
+            if (prs.data.length > 0) {
+              // Получаем автора PR
+              const pr = prs.data[0]; // Берем первый PR, если их несколько
+              prUser = pr.user.login;
+              }
+            
             core.setOutput("pr_user", prUser);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
