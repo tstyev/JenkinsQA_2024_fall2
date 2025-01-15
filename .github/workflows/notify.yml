@@ -25,50 +25,35 @@ jobs:
               .filter(run => run.name === "CI")
               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             const latestCiRun = ciRuns[0];
+            const runNumber = latestCiRun.run_number;
+            core.setOutput("run_number", runNumber);
             core.setOutput("run_id", latestCiRun.id);
-            
-            // Извлекаем PR по коммиту
-            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: commitSHA
-            });
-            
-            let prUser = 'unknown';
-            if (prs.data.length > 0) {
-              // Получаем автора PR
-              const pr = prs.data[0]; // Берем первый PR, если их несколько
-              prUser = pr.user.login;
-              }
-            
-            core.setOutput("pr_user", prUser);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download run_number artifact from CI workflow
-        uses: actions/download-artifact@v4
-        with:
-          name: my_artifact
-          run-id: ${{ steps.find_ci_run.outputs.run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Read run_number from artifact
-        run: |
-          RUN_NUMBER=$(cat run_number.txt)
-          echo "RUN_NUMBER=${RUN_NUMBER}" >> $GITHUB_ENV
-          echo "Run Number: $RUN_NUMBER"
+#      - name: Download run_number artifact from CI workflow
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: my_artifact
+#          run-id: ${{ steps.find_ci_run.outputs.run_id }}
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Read run_number from artifact
+#        run: |
+#          RUN_NUMBER=$(cat run_number.txt)
+#          echo "RUN_NUMBER=${RUN_NUMBER}" >> $GITHUB_ENV
+#          echo "Run Number: $RUN_NUMBER"
 
       - name: Send Telegram Notification
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/$RUN_NUMBER/"
+          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
           
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           
-          PR_USER="${{ steps.find_ci_run.outputs.pr_user }}"
           
-          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER%0A👤 Автор: [${PR_USER}](https://github.com/${PR_USER})"
+          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
