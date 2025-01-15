@@ -38,9 +38,9 @@ jobs:
           
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
+          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           
-          
-          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A"
+          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A🔗 Запуск: [Посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
