@@ -37,7 +37,7 @@ jobs:
             });
 
             // Получаем информацию об авторе коммита
-            const prUser = commitDetails.data.committer ? commitDetails.data.committer.login : 'Unknown';
+            const prUser = commitDetails.data.author ? commitDetails.data.author.login : commitDetails.data.committer.login;
             core.setOutput("pr_user", prUser);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
