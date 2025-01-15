@@ -53,7 +53,7 @@ jobs:
           PR_URL="${{ steps.find_ci_run.outputs.pr_url }}"
           PR_USER="${{ steps.find_ci_run.outputs.pr_user }}"
           
-          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER%0A👤 Автор PR: [${PR_USER}](${PR_URL})"
+          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: $RUN_NUMBER%0A🔗 PR: [${PR_URL}]%0A👤 Автор: [${PR_USER}](https://github.com/${PR_USER})"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
             -d chat_id="secrets.TELEGRAM_CHAT_ID" \
