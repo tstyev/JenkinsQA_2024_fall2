@@ -31,19 +31,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Download run_number artifact from CI workflow
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: my_artifact
-#          run-id: ${{ steps.find_ci_run.outputs.run_id }}
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Read run_number from artifact
-#        run: |
-#          RUN_NUMBER=$(cat run_number.txt)
-#          echo "RUN_NUMBER=${RUN_NUMBER}" >> $GITHUB_ENV
-#          echo "Run Number: $RUN_NUMBER"
-
       - name: Send Telegram Notification
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
