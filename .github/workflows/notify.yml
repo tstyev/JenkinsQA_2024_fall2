@@ -28,17 +28,6 @@ jobs:
             const runNumber = latestCiRun.run_number;
             core.setOutput("run_number", runNumber);
             core.setOutput("run_id", latestCiRun.id);
-            
-            const commitSHA = latestCiRun.head_sha;
-            const commitDetails = await github.rest.repos.getCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: commitSHA
-            });
-
-            // Получаем информацию об авторе коммита
-            const prUser = commitDetails.data.author ? commitDetails.data.author.login : commitDetails.data.committer.login;
-            core.setOutput("pr_user", prUser);
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -52,9 +41,7 @@ jobs:
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           
-          PR_USER="${{ steps.find_ci_run.outputs.pr_user }}"
-          
-          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A🔗 Запуск: [посмотреть запуск](${ESCAPED_CI_RUN_LINK})%0A👤 Автор коммита: [${PR_USER}](https://github.com/${PR_USER})"
+          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A🔗 Запуск: [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
