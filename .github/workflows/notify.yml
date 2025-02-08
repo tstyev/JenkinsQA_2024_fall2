@@ -87,7 +87,7 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
           -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
           -F photo="@test_results.png" \
-          -F caption="ESCAPED_MESSAGE" \
+          -F caption="$ESCAPED_MESSAGE" \
           -F parse_mode="MarkdownV2"
 
 #      - name: Send Telegram Notification
