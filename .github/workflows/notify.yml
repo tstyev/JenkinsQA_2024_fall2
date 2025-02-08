@@ -86,13 +86,24 @@ jobs:
           # Add the total number of tests in the center
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
-          # Add labels with the count and category to the side
-          ax.text(1.2, 0.6, f'Passed: {passed}', fontsize=10, ha='left', color='#8BC34A')
-          ax.text(1.2, 0.4, f'Failed: {failed}', fontsize=10, ha='left', color='#F44336')
-          ax.text(1.2, 0.2, f'Broken: {broken}', fontsize=10, ha='left', color='#FF9800')
-          ax.text(1.2, 0.0, f'Skipped: {skipped}', fontsize=10, ha='left', color='#2196F3')
+          text_x_pos = 1.5  # Позиция для текста по оси X
+          text_y_pos = 0.6  # Начальная позиция для текста по оси Y
           
-          # Save the figure with tight layout to reduce white space
+          # Add labels with the count and category to the side
+          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))
+          ax.text(text_x_pos + 0.12, text_y_pos, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
+      
+          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos - 0.2), 0.1, 0.1, color='#F44336'))
+          ax.text(text_x_pos + 0.12, text_y_pos - 0.2, f'Failed: {failed}', fontsize=12, ha='left', va='center', color='black')
+      
+          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos - 0.4), 0.1, 0.1, color='#FF9800'))
+          ax.text(text_x_pos + 0.12, text_y_pos - 0.4, f'Broken: {broken}', fontsize=12, ha='left', va='center', color='black')
+      
+          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos - 0.6), 0.1, 0.1, color='#2196F3'))
+          ax.text(text_x_pos + 0.12, text_y_pos - 0.6, f'Skipped: {skipped}', fontsize=12, ha='left', va='center', color='black')
+      
+
+      # Save the figure with tight layout to reduce white space
           plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
           "
 
