@@ -70,7 +70,7 @@ jobs:
           values = [passed, failed, broken, skipped]
           colors = ['#8BC34A', '#F44336', '#FF9800', '#2196F3']
           
-          fig, ax = plt.subplots(figsize=(2, 2))  # Reduce figure size
+          fig, ax = plt.subplots(figsize=(5, 5))  # Reduce figure size
           wedges, texts, autotexts = ax.pie(
           values, labels=None, autopct='%1.0f%%', colors=colors,
           startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
@@ -86,8 +86,14 @@ jobs:
           # Add the total number of tests in the center
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
+          # Add labels with the count and category to the side
+          ax.text(1.2, 0.6, f'Passed: {passed}', fontsize=10, ha='left', color='#8BC34A')
+          ax.text(1.2, 0.4, f'Failed: {failed}', fontsize=10, ha='left', color='#F44336')
+          ax.text(1.2, 0.2, f'Broken: {broken}', fontsize=10, ha='left', color='#FF9800')
+          ax.text(1.2, 0.0, f'Skipped: {skipped}', fontsize=10, ha='left', color='#2196F3')
+          
           # Save the figure with tight layout to reduce white space
-          plt.savefig('test_results_donut_chart.png', dpi=250, bbox_inches='tight', pad_inches=0.01)
+          plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
           "
 
       - name: Send Telegram Notification
