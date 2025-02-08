@@ -54,21 +54,26 @@ jobs:
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
-      - name: Download test results chart
+      - name: Create Test Results Image
         run: |
-          CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.json"
-          wget -q -O test_results.png "$CHART_URL"
+          convert -size 400x200 xc:white -gravity center -pointsize 20 \
+          -fill black -annotate +0+0 "Test Results" test_results.png
+
+      - name: Debug Image File
+        run: |
+          ls -lah test_results.png || echo "Файл отсутствует!"
+          file test_results.png || echo "Файл поврежден!"
 
       - name: Send Telegram Notification
         run: |
           REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
           CI_RUN_LINK="https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
           
-          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
           
           ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
-          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g')
+          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g')
           
           MESSAGE="📝 *Новый отчет Allure:* [открыть отчет](${ESCAPED_REPORT_LINK})%0A
           📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A
