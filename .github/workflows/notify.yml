@@ -32,7 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        run: pip install matplotlib requests pillow
+        run: pip install matplotlib requests
 
       - name: Fetch test results from Allure report
         run: |
@@ -58,7 +58,6 @@ jobs:
       - name: Generate test results donut chart
         run: |
           python -c "
-          from PIL import Image
           import matplotlib.pyplot as plt
           import os
           
@@ -89,12 +88,6 @@ jobs:
           
           # Save the figure with tight layout to reduce white space
           plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
-          
-          image = Image.open("test_results_donut_chart.png")
-          image = image.resize((image.width // 2, image.height // 2), Image.Resampling.LANCZOS)
-          image.save("test_results_donut_chart_resized.png")
-          
-          plt.close()
           "
 
       - name: Send Telegram Notification
