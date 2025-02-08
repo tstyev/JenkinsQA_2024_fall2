@@ -31,6 +31,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Fetch test results from Allure report
         run: |
           REPORT_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
@@ -50,31 +53,31 @@ jobs:
           echo "SKIPPED=$SKIPPED" >> $GITHUB_ENV
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
+
+      - name: Download test results chart
+        run: |
+          CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.json"
+          wget -q -O test_results.png "$CHART_URL"
+
+      - name: Send Telegram Notification with chart
+        run: |
+          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
+          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
           
-          - name: Download test results chart
-            run: |
-              CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.json"
-              wget -q -O test_results.png "$CHART_URL"
+          MESSAGE="📝 *Новый отчет Allure:* [открыть отчет]($REPORT_LINK)%0A
+            📅 Дата и время: $(date +"%Y-%m-%d %H:%M:%S")%0A
+            🔢 Всего тестов: $TOTAL%0A
+            ✅ Успешных: $PASSED%0A
+            ❌ Проваленных: $FAILED%0A
+            ⚠️ Проблемных: $BROKEN%0A
+            ⏱️ Время выполнения: $DURATION_FINAL%0A
+            🔗 *Запуск:* [посмотреть запуск]($CI_RUN_LINK)"
           
-          - name: Send Telegram Notification with chart
-            run: |
-              REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
-              CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
-          
-              MESSAGE="📝 *Новый отчет Allure:* [открыть отчет]($REPORT_LINK)%0A
-                📅 Дата и время: $(date +"%Y-%m-%d %H:%M:%S")%0A
-                ✅ Успешных: $PASSED%0A
-                ❌ Проваленных: $FAILED%0A
-                ⚠️ Проблемных: $BROKEN%0A
-                🔢 Всего тестов: $TOTAL%0A
-                ⏱️ Время выполнения: $DURATION_FINAL%0A
-                🔗 *Запуск:* [посмотреть запуск]($CI_RUN_LINK)"
-          
-              curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
-              -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-              -F photo="@test_results.png" \
-              -F caption="$MESSAGE" \
-              -F parse_mode="MarkdownV2"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -F photo="@test_results.png" \
+          -F caption="$MESSAGE" \
+          -F parse_mode="MarkdownV2"
 
 #      - name: Send Telegram Notification
 #        run: |
