@@ -33,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        run: pip install matplotlib requests
+        run: pip install matplotlib
 
       - name: Fetch test results from Allure report
         run: |
