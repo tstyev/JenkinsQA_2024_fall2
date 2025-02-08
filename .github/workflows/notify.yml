@@ -95,13 +95,14 @@ jobs:
               plt.gcf().text(
                   legend_x, legend_y - i * 0.15,
                   f'{label}: {value}',
-                  color='black', fontsize=10, fontweight='bold',
+                  color='black', fontsize=10,
                   bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3')
               )
               # Добавляем цветной квадрат перед текстом
               rect = patches.Rectangle(
                   (legend_x - 0.05, legend_y - i * 0.15 - 0.02),
-                  0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
+                  0.03, 0.03, color=color, transform=ax.transAxes, clip_on=False
+#                  0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
               )
               plt.gcf().add_artist(rect)
           
