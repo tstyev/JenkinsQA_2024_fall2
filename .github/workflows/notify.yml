@@ -54,52 +54,28 @@ jobs:
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
-      - name: Generate test results chart
+      - name: Generate test results pie chart
         run: |
-          # Определяем углы секторов на основе количества тестов
-          TOTAL_SUM=$((PASSED + FAILED + BROKEN + SKIPPED))
-          if [ "$TOTAL_SUM" -eq 0 ]; then
-            echo "Нет тестов для построения диаграммы."
-            exit 1
-          fi
+          echo "Passed $PASSED" > results.dat
+          echo "Failed $FAILED" >> results.dat
+          echo "Broken $BROKEN" >> results.dat
+          echo "Skipped $SKIPPED" >> results.dat
 
-          ANGLE_PASSED=$(echo "360 * $PASSED / $TOTAL_SUM" | bc -l)
-          ANGLE_FAILED=$(echo "360 * $FAILED / $TOTAL_SUM" | bc -l)
-          ANGLE_BROKEN=$(echo "360 * $BROKEN / $TOTAL_SUM" | bc -l)
-          ANGLE_SKIPPED=$(echo "360 * $SKIPPED / $TOTAL_SUM" | bc -l)
-
-          # Создаем файл с данными для gnuplot
-          cat <<EOF > angles.dat
-          0 $ANGLE_PASSED "green" "Passed"
-          $ANGLE_PASSED $(echo "$ANGLE_PASSED + $ANGLE_FAILED" | bc -l) "red" "Failed"
-          $(echo "$ANGLE_PASSED + $ANGLE_FAILED" | bc -l) $(echo "$ANGLE_PASSED + $ANGLE_FAILED + $ANGLE_BROKEN" | bc -l) "orange" "Broken"
-          $(echo "$ANGLE_PASSED + $ANGLE_FAILED + $ANGLE_BROKEN" | bc -l) 360 "blue" "Skipped"
-          EOF
-
-          # Генерируем круговую диаграмму
-          gnuplot -persist <<-EOF
-            set terminal pngcairo enhanced size 600,400;
-            set output 'test_results_chart.png';
-            set title 'Allure Test Results';
-            set style fill solid 1.0;
-            unset key;
-            unset border;
-            unset tics;
-            set xrange [-1.1:1.1];
-            set yrange [-1.1:1.1];
-
-            set palette model RGB defined (0 "green", 1 "red", 2 "orange", 3 "blue")
-
-            plot 'angles.dat' using 1:2:3:4 with filledcurves lc palette title columnheader(4)
-          EOF
-        shell: /usr/bin/bash -e {0}
-        env:
-          PASSED: $PASSED
-          FAILED: $FAILED
-          BROKEN: $BROKEN
-          SKIPPED: $SKIPPED
-          TOTAL: $TOTAL
-          DURATION_FINAL: $DURATION_FINAL
+          gnuplot -e "
+          set terminal pngcairo enhanced size 600,400;
+          set output 'test_results_pie_chart.png';
+          set title 'Allure Test Results';
+          set style fill solid 1.0 border -1;
+          set datafile separator space;
+          set style data pie;
+          set key off;
+          set label 1 'Passed' at screen 0.5, 0.9 tc rgb 'green';
+          set label 2 'Failed' at screen 0.5, 0.8 tc rgb 'red';
+          set label 3 'Broken' at screen 0.5, 0.7 tc rgb 'orange';
+          set label 4 'Skipped' at screen 0.5, 0.6 tc rgb 'blue';
+          plot 'results.dat' using 2:xtic(1) title 'Results' with pie;
+          "
+      
 
       - name: Send Telegram Notification
         run: |
@@ -112,7 +88,7 @@ jobs:
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
           
-          MESSAGE="📝 Отчет: [открыть отчет](${ESCAPED_REPORT_LINK})
+          MESSAGE="📝 Отчет: [открыть](${ESCAPED_REPORT_LINK})
           📅 Дата и время: ${ESCAPED_TIMESTAMP}
           🔢 Всего тестов: $TOTAL
           ✅ Успешных: $PASSED
@@ -120,7 +96,7 @@ jobs:
           ⚠️ Проблемных: $BROKEN
           ⏸️ Пропущенных: $SKIPPED
           ⏱️ Время выполнения: $DURATION_FINAL
-          🔗 Запуск: [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
+          🔗 Запуск: [посмотреть](${ESCAPED_CI_RUN_LINK})"
           
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed 's|*|\\*|g; s|_|\\_|g; s|~|\\~|g')
           
