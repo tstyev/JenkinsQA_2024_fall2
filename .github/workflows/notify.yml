@@ -58,7 +58,7 @@ jobs:
 
       - name: Download the chart image from Allure report
         run: |
-          CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/blob/gh-pages/widgets/categories-trend.png"
+          CHART_URL="https://github.com/evgnick/JenkinsQA_2024_fall2/blob/gh-pages/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.png"
           curl -o test_results.png "$CHART_URL"
 
       - name: Send Telegram Notification
