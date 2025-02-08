@@ -81,14 +81,11 @@ jobs:
                   autotext.set_text('')
               autotext.set_fontsize(8)
           
-          # Добавляем центр круга для эффекта "пончика"
           centre_circle = plt.Circle((0, 0), 0.60, fc='white')
           fig.gca().add_artist(centre_circle)
           
-          # Добавляем количество тестов в центре диаграммы
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
-          # Добавляем легенду сбоку в виде цветных квадратиков и текста
           legend_x = 1.05
           legend_y = 0.5
           plt.gca().set_position([0, 0, 0.8, 1])  # Смещаем диаграмму влево
@@ -103,9 +100,8 @@ jobs:
             )
             plt.gcf().add_artist(rect)
             
-            # Текст рядом с квадратами
             plt.gcf().text(
-              legend_x - 0.20,
+              legend_x - 0.25,
               legend_y - i * 0.1,
               f'{value} - {label}',
               color='black', fontsize=10,
@@ -113,7 +109,6 @@ jobs:
               ha='left', va='center'
             )
           
-          # Сохраняем картинку с минимальными отступами
           plt.savefig('chart.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
           "
 
