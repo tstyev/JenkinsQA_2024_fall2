@@ -5,6 +5,7 @@ on:
     workflows: [ "pages-build-deployment" ]
     types:
       - completed
+
 jobs:
   notify:
     if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
@@ -44,7 +45,6 @@ jobs:
           FAILED=$(jq '.statistic.failed' summary.json || echo "0")
           BROKEN=$(jq '.statistic.broken' summary.json || echo "0")
           SKIPPED=$(jq '.statistic.skipped' summary.json || echo "0")
-          TOTAL=$(jq '.statistic.total' summary.json || echo "0")
           DURATION=$(jq '.time.duration' summary.json || echo "0")
           DURATION_FINAL=$(date -ud @$((DURATION / 1000)) +'%M:%S')
           
@@ -52,7 +52,6 @@ jobs:
           echo "FAILED=$FAILED" >> $GITHUB_ENV
           echo "BROKEN=$BROKEN" >> $GITHUB_ENV
           echo "SKIPPED=$SKIPPED" >> $GITHUB_ENV
-          echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
       - name: Generate test results donut chart
@@ -103,7 +102,6 @@ jobs:
               rect = patches.Rectangle(
                   (legend_x - 0.07, legend_y - i * 0.1 - 0.015),
                   0.03, 0.03, color=color, transform=ax.transAxes, clip_on=False
-#                  0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
               )
               plt.gcf().add_artist(rect)
           
@@ -122,12 +120,7 @@ jobs:
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
           
-          MESSAGE="🔢 Total tests: $TOTAL
-          🟩 Passed: $PASSED
-          🟥 Failed: $FAILED
-          🟧 Broken: $BROKEN
-          🟦 Skipped: $SKIPPED
-          📝 Report: [open](${ESCAPED_REPORT_LINK})
+          MESSAGE="📝 Report: [open](${ESCAPED_REPORT_LINK})
           📅 Data / time: ${ESCAPED_TIMESTAMP}
           ⏱️ Execution time: $DURATION_FINAL
           🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
