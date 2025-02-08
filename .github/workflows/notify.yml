@@ -73,7 +73,8 @@ jobs:
           fig, ax = plt.subplots(figsize=(2, 2))  # Reduce figure size
           wedges, texts, autotexts = ax.pie(
           values, labels=None, autopct='%1.0f%%', colors=colors,
-          startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85
+          startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
+          autotextprops={'fontsize': 10}
           )
           
           # Adding the center circle to create the 'donut' effect
@@ -85,6 +86,14 @@ jobs:
           
           # Save the figure with tight layout to reduce white space
           plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
+          
+          img = Image.open('test_results_donut_chart.png')
+
+          width, height = img.size
+          new_size = (int(width / 1.7), int(height / 1.7))
+          img = img.resize(new_size, Image.ANTIALIAS)
+  
+          img.save('test_results_donut_chart_resized.png')
           "
 
       - name: Send Telegram Notification
