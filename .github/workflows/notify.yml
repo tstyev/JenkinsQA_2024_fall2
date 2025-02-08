@@ -32,7 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        run: pip install matplotlib requests
+        run: pip install matplotlib requests pillow
 
       - name: Fetch test results from Allure report
         run: |
@@ -58,6 +58,7 @@ jobs:
       - name: Generate test results donut chart
         run: |
           python -c "
+          from PIL import Image
           import matplotlib.pyplot as plt
           import os
           
@@ -117,6 +118,10 @@ jobs:
           ❌ Проваленных: $FAILED
           ⚠️ Проблемных: $BROKEN
           ⏸️ Пропущенных: $SKIPPED
+          🟩 Успешных: $PASSED
+          🟥 Проваленных: $FAILED
+          🟧 Проблемных: $BROKEN
+          🟦 Пропущенных: $SKIPPED
           ⏱️ Время выполнения: $DURATION_FINAL
           🔗 Запуск: [посмотреть](${ESCAPED_CI_RUN_LINK})"
           
