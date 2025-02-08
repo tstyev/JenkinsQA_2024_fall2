@@ -80,10 +80,15 @@ jobs:
 
       - name: Generate test results pie chart
         run: |
-          echo "$PASSED Passed" > results.dat
-          echo "$FAILED Failed" >> results.dat
-          echo "$BROKEN Broken" >> results.dat
-          echo "$SKIPPED Skipped" >> results.dat
+          echo "$PASSED" > results.dat
+          echo "$FAILED" >> results.dat
+          echo "$BROKEN" >> results.dat
+          echo "$SKIPPED" >> results.dat
+
+          echo "Passed green" > labels.dat
+          echo "Failed red" >> labels.dat
+          echo "Broken orange" >> labels.dat
+          echo "Skipped blue" >> labels.dat
 
           gnuplot -persist <<-EOF
             set terminal pngcairo enhanced size 600,400
@@ -94,29 +99,20 @@ jobs:
             unset tics
             set size square
 
-            # Читаем данные и вычисляем total
+            # Читаем данные
             stats 'results.dat' using 1 nooutput
             total = STATS_sum
 
             start_angle = 0
-            colors = "green red orange blue"
-            labels = "Passed Failed Broken Skipped"
 
-            # Рисуем круговую диаграмму
+            # Рисуем сегменты круга
             plot for [row=0:3] 'results.dat' using (start_angle):(start_angle=start_angle+360.*column(1)/total):(360.*column(1)/total) \
-              with circles lc rgb word(colors, row+1) fs solid border -1
+              with circles lc rgb word(labels.dat, row+1) fs solid border -1
 
             # Добавляем подписи
             start_angle = 0
             do for [row=0:3] {
-              portion = `awk "NR==$(expr $row + 1) {print \$1}" results.dat`
-              angle = start_angle + (180. * portion / total)
-              x_pos = 0.7 * cos(angle)
-              y_pos = 0.7 * sin(angle)
-              set label row+1 word(labels, row+1) at first x_pos, y_pos tc rgb word(colors, row+1) font ",10"
-              start_angle = start_angle + 360. * portion / total
-            }
-          EOF
+              portion = `awk "NR==$(expr $row + 1) {
       
 
       - name: Send Telegram Notification
