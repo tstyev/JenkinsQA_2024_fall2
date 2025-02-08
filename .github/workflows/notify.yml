@@ -31,31 +31,87 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Send Telegram Notification
-#        run: |
-#          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-#          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
-#          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
-#
-#          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
-#          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
-#          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
-#
-#          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A🔗 Запуск: [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
-#
-#          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
-#            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-#            -d text="${MESSAGE}" \
-#            -d parse_mode="MarkdownV2"
+      #      - name: Send Telegram Notification
+      #        run: |
+      #          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+      #          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
+      #          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+      #
+      #          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|:|\\:|g; s|\.|\\.|g; s|_|\\_|g; s|/|\\/|g')
+      #          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
+      #          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
+      #
+      #          MESSAGE="📝 Новый отчет Allure: [открыть отчет](${ESCAPED_REPORT_LINK})%0A📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A⚙️ Сборка: ${{ steps.find_ci_run.outputs.run_number }}%0A🔗 Запуск: [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
+      #
+      #          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+      #            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+      #            -d text="${MESSAGE}" \
+      #            -d parse_mode="MarkdownV2"
+
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Extract Test Results
+        id: test_results
+        run: |
+          PASSED=$(jq '.statistic.passed' allure-report/widgets/summary.json)
+          FAILED=$(jq '.statistic.failed' allure-report/widgets/summary.json)
+          BROKEN=$(jq '.statistic.broken' allure-report/widgets/summary.json)
+          TOTAL=$(($PASSED + $FAILED + $BROKEN))
+          
+          DURATION_MS=$(jq '.time.duration' allure-report/widgets/summary.json)
+          DURATION_SEC=$(($DURATION_MS / 1000))
+          DURATION_MIN=$(($DURATION_SEC / 60))
+          DURATION_FINAL="${DURATION_MIN} мин ${DURATION_SEC} сек"
+          
+          echo "PASSED=$PASSED" >> $GITHUB_ENV
+          echo "FAILED=$FAILED" >> $GITHUB_ENV
+          echo "BROKEN=$BROKEN" >> $GITHUB_ENV
+          echo "TOTAL=$TOTAL" >> $GITHUB_ENV
+          echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
+
+      - name: Install Python dependencies
+        run: pip install matplotlib
+
+      - name: Generate Test Results Chart
+        run: |
+          python <<EOF
+          import matplotlib.pyplot as plt
+          
+          labels = ["Passed", "Failed", "Broken"]
+          sizes = [${{ env.PASSED }}, ${{ env.FAILED }}, ${{ env.BROKEN }}]
+          colors = ["#4CAF50", "#F44336", "#FFC107"]
+          
+          plt.figure(figsize=(4, 4))
+          plt.pie(sizes, labels=labels, autopct='%1.1f%%', colors=colors, startangle=140)
+          plt.title(f"Test Results: ${{ env.TOTAL }} tests")
+          
+          plt.savefig("test_results.png")
+          EOF
 
       - name: Send Slack Notification
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
           REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
           CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
-
-          MESSAGE="*Новый отчет Allure*\n📅 *Дата и время*: $TIMESTAMP\n⚙️ *Сборка*: ${{ steps.find_ci_run.outputs.run_number }}\n🔗 *<$REPORT_LINK|Открыть отчет>*\n🔗 *<$CI_RUN_LINK|Посмотреть запуск>*"
-
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\": \"$MESSAGE\"}" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+          
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -F photo="@test_results.png" \
+          -F caption="📝 Новый отчет Allure: [ открыть отчет ](https://redroverschool.github.io/JenkinsQA_2024_fall/${{ steps.find_ci_run.outputs.run_number }})%0A
+          📅 Дата и время: $(date +"%Y-%m-%d %H:%M:%S")%0A
+          ✅ Успешных: ${{ env.PASSED }}%0A
+          ❌ Проваленных: ${{ env.FAILED }}%0A
+          ⚠️ Проблемных: ${{ env.BROKEN }}%0A
+          🔢 Всего тестов: ${{ env.TOTAL }}%0A
+          ⏱️ Время выполнения: ${{ env.DURATION_FINAL }}%0A
+          🔗 Запуск: [ посмотреть запуск ](https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }})" \
+            -F parse_mode="MarkdownV2"
+#          MESSAGE="📝 Отчет: [открыть отчет](${REPORT_LINK})%0A📅 Дата и время: ${TIMESTAMP}%0A🔢 Всего тестов: ${{ env.TOTAL }}%0A✅ Успешных: ${{ env.PASSED }}%0A❌ Проваленных: ${{ env.FAILED }}%0A⚠️ Проблемных: ${{ env.BROKEN }}%0A⏱️ Время выполнения: ${{ env.DURATION_FINAL }}%0A🔗 Запуск: [посмотреть запуск](${CI_RUN_LINK})"
+#                    curl -X POST -H 'Content-type: application/json' \
+#                      --data "{\"text\": \"$MESSAGE\"}" \
+#                      ${{ secrets.SLACK_WEBHOOK_URL }}
+#                    MESSAGE="*Новый отчет Allure*\n📅 *Дата и время*: $TIMESTAMP\n⚙️ *Сборка*: ${{ steps.find_ci_run.outputs.run_number }}\n🔗 *<$REPORT_LINK|Открыть отчет>*\n🔗 *<$CI_RUN_LINK|Посмотреть запуск>*"
