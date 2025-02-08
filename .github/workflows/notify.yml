@@ -31,6 +31,51 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fetch test results from Allure report
+        run: |
+          REPORT_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
+          wget -q -O summary.json "$REPORT_URL"
+          
+          PASSED=$(jq '.statistic.passed' summary.json)
+          FAILED=$(jq '.statistic.failed' summary.json)
+          BROKEN=$(jq '.statistic.broken' summary.json)
+          SKIPPED=$(jq '.statistic.skipped' summary.json)
+          TOTAL=$(jq '.statistic.total' summary.json)
+          DURATION=$(jq '.time.duration' summary.json)
+          DURATION_FINAL=$(date -ud @$((DURATION / 1000)) +'%M:%S')
+          
+          echo "PASSED=$PASSED" >> $GITHUB_ENV
+          echo "FAILED=$FAILED" >> $GITHUB_ENV
+          echo "BROKEN=$BROKEN" >> $GITHUB_ENV
+          echo "SKIPPED=$SKIPPED" >> $GITHUB_ENV
+          echo "TOTAL=$TOTAL" >> $GITHUB_ENV
+          echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
+          
+          - name: Download test results chart
+            run: |
+              CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.json"
+              wget -q -O test_results.png "$CHART_URL"
+          
+          - name: Send Telegram Notification with chart
+            run: |
+              REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
+              CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+          
+              MESSAGE="📝 *Новый отчет Allure:* [открыть отчет]($REPORT_LINK)%0A
+                📅 Дата и время: $(date +"%Y-%m-%d %H:%M:%S")%0A
+                ✅ Успешных: $PASSED%0A
+                ❌ Проваленных: $FAILED%0A
+                ⚠️ Проблемных: $BROKEN%0A
+                🔢 Всего тестов: $TOTAL%0A
+                ⏱️ Время выполнения: $DURATION_FINAL%0A
+                🔗 *Запуск:* [посмотреть запуск]($CI_RUN_LINK)"
+          
+              curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
+              -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -F photo="@test_results.png" \
+              -F caption="$MESSAGE" \
+              -F parse_mode="MarkdownV2"
+
 #      - name: Send Telegram Notification
 #        run: |
 #          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
@@ -48,14 +93,14 @@ jobs:
 #            -d text="${MESSAGE}" \
 #            -d parse_mode="MarkdownV2"
 
-      - name: Send Slack Notification
-        run: |
-          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
-          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
-
-          MESSAGE="*Новый отчет Allure*\n📅 *Дата и время*: $TIMESTAMP\n⚙️ *Сборка*: ${{ steps.find_ci_run.outputs.run_number }}\n🔗 *<$REPORT_LINK|Открыть отчет>*\n🔗 *<$CI_RUN_LINK|Посмотреть запуск>*"
-
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\": \"$MESSAGE\"}" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+#      - name: Send Slack Notification
+#        run: |
+#          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+#          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
+#          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+#
+#          MESSAGE="*Новый отчет Allure*\n📅 *Дата и время*: $TIMESTAMP\n⚙️ *Сборка*: ${{ steps.find_ci_run.outputs.run_number }}\n🔗 *<$REPORT_LINK|Открыть отчет>*\n🔗 *<$CI_RUN_LINK|Посмотреть запуск>*"
+#
+#          curl -X POST -H 'Content-type: application/json' \
+#            --data "{\"text\": \"$MESSAGE\"}" \
+#            ${{ secrets.SLACK_WEBHOOK_URL }}
