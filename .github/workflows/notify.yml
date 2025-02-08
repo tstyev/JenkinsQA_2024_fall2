@@ -55,26 +55,26 @@ jobs:
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
-      - name: Generate test results donut chart
+      - name: Generate donut chart with test results
         run: |
           python - <<EOF
           import matplotlib.pyplot as plt
           import os
-          
+
           passed = int(os.getenv("PASSED", 0))
           failed = int(os.getenv("FAILED", 0))
           broken = int(os.getenv("BROKEN", 0))
           skipped = int(os.getenv("SKIPPED", 0))
-          
+
           labels = ["Passed", "Failed", "Broken", "Skipped"]
           values = [passed, failed, broken, skipped]
           colors = ["#8BC34A", "#F44336", "#FF9800", "#2196F3"]
-          
+
           # Calculate percentages
           total = sum(values)
           percentages = [f'{(v / total) * 100:.1f}%' for v in values]
-          
-          fig, ax = plt.subplots(figsize=(6, 6))
+
+          fig, ax = plt.subplots(figsize=(5, 5))  # Reduce the size of the figure
           wedges, texts, autotexts = ax.pie(
               values, labels=None, autopct='%1.0f%%', colors=colors, 
               startangle=90, wedgeprops={"edgecolor": "white", "linewidth": 2}, pctdistance=0.85
@@ -86,16 +86,17 @@ jobs:
 
           # Add percentage labels to separate blocks
           for i, wedge in enumerate(wedges):
-              ax.text(wedge.get_center()[0] * 1.2, wedge.get_center()[1] * 1.2, f'{labels[i]}: {percentages[i]}', 
-                      ha='center', fontsize=12, fontweight='bold', color=colors[i])
+              angle = (wedge.theta1 + wedge.theta2) / 2  # Calculate angle for label position
+              x = 1.3 * (wedge.r * 0.5) * (math.cos(math.radians(angle)))  # Calculate x-coordinate
+              y = 1.3 * (wedge.r * 0.5) * (math.sin(math.radians(angle)))  # Calculate y-coordinate
+              ax.text(x, y, f'{labels[i]}: {percentages[i]}', ha='center', fontsize=12, fontweight='bold', color=colors[i])
 
           # Add total tests count in the center
           ax.text(0, 0, str(total), ha="center", va="center", fontsize=20, fontweight="bold")
 
-          # Save image
-          plt.savefig("test_results_donut_chart.png", dpi=300)
+          # Save image with tight layout to reduce white space
+          plt.savefig("test_results_donut_chart.png", dpi=300, bbox_inches='tight', pad_inches=0.1)
           EOF
-      
 
       - name: Send Telegram Notification
         run: |
