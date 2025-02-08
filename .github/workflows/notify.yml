@@ -72,11 +72,6 @@ jobs:
           plot 'results.dat' using 2:xtic(1) with linespoints title 'Tests';
           "
 
-      - name: Download the chart image from Allure report
-        run: |
-          CHART_URL="https://github.com/evgnick/JenkinsQA_2024_fall2/blob/gh-pages/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.png"
-          curl -o test_results.png "$CHART_URL"
-
       - name: Send Telegram Notification
         run: |
           REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
@@ -102,7 +97,7 @@ jobs:
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
           -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-          -F photo="@test_results.png" \
+          -F photo="@test_results_chart.png" \
           -F caption="$ESCAPED_MESSAGE" \
           -F parse_mode="MarkdownV2"
 
