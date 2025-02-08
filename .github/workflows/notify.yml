@@ -90,19 +90,17 @@ jobs:
           text_y_pos = 0.8  # Начальная позиция для текста по оси Y
           offset_y = 0.2  # Смещение по оси Y для следующего квадратика
           
-          # Рисуем цветные квадратики и добавляем текст
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))  # Passed
-          ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
-          
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - offset_y), 0.1, 0.1, color='#F44336'))  # Failed
-          ax.text(text_x_pos + 0.12, text_y_pos - offset_y + 0.05, f'Failed: {failed}', fontsize=12, ha='left', va='center', color='black')
-                
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 2*offset_y), 0.1, 0.1, color='#FF9800'))  # Broken
-          ax.text(text_x_pos + 0.12, text_y_pos - 2*offset_y + 0.05, f'Broken: {broken}', fontsize=12, ha='left', va='center', color='black')
-          
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 3*offset_y), 0.1, 0.1, color='#2196F3'))  # Skipped
-          ax.text(text_x_pos + 0.12, text_y_pos - 3*offset_y + 0.05, f'Skipped: {skipped}', fontsize=12, ha='left', va='center', color='black')
-          
+          legend_x = 1.2
+          legend_y = 0.2
+          plt.gca().set_position([0, 0, 0.8, 1])  # Смещаем диаграмму влево
+          for i, (label, color, value) in enumerate(zip(labels, colors, values)):
+            plt.gcf().text(
+                legend_x, legend_y - i * 0.15,
+                f'■ {label}: {value}',
+                color='black', fontsize=10, fontweight='bold',
+                bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3')
+            )
+        
           #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))
           #          ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
           #      
