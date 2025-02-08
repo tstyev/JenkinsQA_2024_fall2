@@ -90,13 +90,9 @@ jobs:
           # Save the figure with tight layout to reduce white space
           plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
           
-          img = Image.open('test_results_donut_chart.png')
-
-          width, height = img.size
-          new_size = (int(width / 1.7), int(height / 1.7))
-          img = img.resize(new_size, Image.ANTIALIAS)
-  
-          img.save('test_results_donut_chart_resized.png')
+          image = Image.open("test_results_donut_chart.png")
+          image = image.resize((image.width // 2, image.height // 2), Image.Resampling.LANCZOS)
+          image.save("test_results_donut_chart_resized.png")
           "
 
       - name: Send Telegram Notification
