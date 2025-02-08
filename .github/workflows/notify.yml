@@ -54,6 +54,30 @@ jobs:
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
+#      - name: Generate test results pie chart
+#        run: |
+#          echo "$PASSED Passed" > results.dat
+#          echo "$FAILED Failed" >> results.dat
+#          echo "$BROKEN Broken" >> results.dat
+#          echo "$SKIPPED Skipped" >> results.dat
+#
+#          gnuplot -e "
+#          set terminal pngcairo enhanced size 600,400;
+#          set output 'test_results_pie_chart.png';
+#          set title 'Allure Test Results';
+#          set style fill solid 1.0 border -1;
+#          set datafile separator space;
+#          set key off;
+#          set style data histograms;
+#          set style histogram rowstacked;
+#          set style fill solid border -1;
+#          set xtics rotate by -45;
+#          plot 'results.dat' using 1:xtic(2) with boxes lc rgb 'green', \
+#               '' using 1:xtic(2) with boxes lc rgb 'red', \
+#               '' using 1:xtic(2) with boxes lc rgb 'orange', \
+#               '' using 1:xtic(2) with boxes lc rgb 'blue';
+#          "
+
       - name: Generate test results pie chart
         run: |
           echo "$PASSED Passed" > results.dat
@@ -61,23 +85,33 @@ jobs:
           echo "$BROKEN Broken" >> results.dat
           echo "$SKIPPED Skipped" >> results.dat
 
-          gnuplot -e "
-          set terminal pngcairo enhanced size 600,400;
-          set output 'test_results_pie_chart.png';
-          set title 'Allure Test Results';
-          set style fill solid 1.0 border -1;
-          set datafile separator space;
-          set key off;
-          set style data histograms;
-          set style histogram rowstacked;
-          set style fill solid border -1;
-          set xtics rotate by -45;
-          plot 'results.dat' using 1:xtic(2) with boxes lc rgb 'green', \
-               '' using 1:xtic(2) with boxes lc rgb 'red', \
-               '' using 1:xtic(2) with boxes lc rgb 'orange', \
-               '' using 1:xtic(2) with boxes lc rgb 'blue';
-          "
-      
+          gnuplot -persist <<-EOF
+            set terminal pngcairo enhanced size 600,400
+            set output 'test_results_pie_chart.png'
+            set title 'Allure Test Results'
+            unset key
+            unset border
+            unset tics
+            set size square
+          
+            datafile = 'results.dat'
+            total = `awk '{sum += \$1} END {print sum}' results.dat`
+            start_angle = 0
+            colors = "green red orange blue"
+            i = 0
+          
+            plot for [row=0:3] datafile using (start_angle):(start_angle=start_angle+360.*column(1)/total):(360.*column(1)/total) \
+              with circles lc rgb word(colors, row+1) fs solid border -1
+          
+            start_angle = 0
+            do for [row=0:3] {
+              set label row+1 word("Passed Failed Broken Skipped", row+1) \
+                at first (0.7*cos(start_angle+180.*column(row+1)/total)), (0.7*sin(start_angle+180.*column(row+1)/total)) \
+                tc rgb word(colors, row+1) font ",10"
+              start_angle = start_angle + 360.*column(row+1)/total
+            }
+          EOF
+
 
       - name: Send Telegram Notification
         run: |
