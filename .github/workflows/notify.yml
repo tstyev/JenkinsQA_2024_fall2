@@ -64,12 +64,23 @@ jobs:
           gnuplot -e "
           set terminal pngcairo enhanced size 600,400;
           set output 'test_results_chart.png';
-          set title 'Allure Test Results';
-          set xlabel 'Test Categories';
-          set ylabel 'Number of Tests';
-          set grid;
-          set style data linespoints;
-          plot 'results.dat' using 2:xtic(1) with linespoints title 'Tests';
+          set title 'Test Results';
+          set style fill solid 1.0 border -1;
+          set boxwidth 0.5;
+          set key off;
+          set xrange [-1.2:1.2];
+          set yrange [-1.2:1.2];
+          set style data histogram;
+          set style histogram rowstacked;
+          set style fill solid border -1;
+          set label 1 'Passed' at 1,1.2 tc rgb 'green';
+          set label 2 'Failed' at 1,1.0 tc rgb 'red';
+          set label 3 'Broken' at 1,0.8 tc rgb 'orange';
+          set label 4 'Skipped' at 1,0.6 tc rgb 'blue';
+          plot 'results.dat' using 1:xtic(2) with boxes lc rgb 'green', \
+               '' using 1:xtic(2) with boxes lc rgb 'red', \
+               '' using 1:xtic(2) with boxes lc rgb 'orange', \
+               '' using 1:xtic(2) with boxes lc rgb 'blue';
           "
 
       - name: Send Telegram Notification
