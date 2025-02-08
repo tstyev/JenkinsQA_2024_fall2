@@ -108,7 +108,7 @@ jobs:
               plt.gcf().add_artist(rect)
           
           # Сохраняем картинку с минимальными отступами
-          plt.savefig('test_results_donut_chart.png', dpi=250, bbox_inches='tight', pad_inches=0.05)
+          plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
           "
 
       - name: Send Telegram Notification
