@@ -56,10 +56,10 @@ jobs:
 
       - name: Generate test results pie chart
         run: |
-          echo "Passed $PASSED" > results.dat
-          echo "Failed $FAILED" >> results.dat
-          echo "Broken $BROKEN" >> results.dat
-          echo "Skipped $SKIPPED" >> results.dat
+          echo "$PASSED Passed" > results.dat
+          echo "$FAILED Failed" >> results.dat
+          echo "$BROKEN Broken" >> results.dat
+          echo "$SKIPPED Skipped" >> results.dat
 
           gnuplot -e "
           set terminal pngcairo enhanced size 600,400;
@@ -69,13 +69,8 @@ jobs:
           set datafile separator space;
           set style data pie;
           set key off;
-          set label 1 'Passed' at screen 0.5, 0.9 tc rgb 'green';
-          set label 2 'Failed' at screen 0.5, 0.8 tc rgb 'red';
-          set label 3 'Broken' at screen 0.5, 0.7 tc rgb 'orange';
-          set label 4 'Skipped' at screen 0.5, 0.6 tc rgb 'blue';
-          plot 'results.dat' using 2:xtic(1) title 'Results' with pie;
+          plot 'results.dat' using 1:2 with pie;
           "
-      
 
       - name: Send Telegram Notification
         run: |
