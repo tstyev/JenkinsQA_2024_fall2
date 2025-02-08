@@ -87,7 +87,7 @@ jobs:
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
           # Save the figure with tight layout to reduce white space
-          plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
+          plt.savefig('test_results_donut_chart.png', dpi=250, bbox_inches='tight', pad_inches=0.01)
           "
 
       - name: Send Telegram Notification
@@ -101,20 +101,16 @@ jobs:
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
           
-          MESSAGE="
-          📝 Отчет: [открыть](${ESCAPED_REPORT_LINK})
-          📅 Дата и время: ${ESCAPED_TIMESTAMP}
-          🔢 Всего тестов: $TOTAL
-          ✅ Успешных: $PASSED
-          ❌ Проваленных: $FAILED
-          ⚠️ Проблемных: $BROKEN
-          ⏸️ Пропущенных: $SKIPPED
-          🟩 Успешных: $PASSED
-          🟥 Проваленных: $FAILED
-          🟧 Проблемных: $BROKEN
-          🟦 Пропущенных: $SKIPPED
-          ⏱️ Время выполнения: $DURATION_FINAL
-          🔗 Запуск: [посмотреть](${ESCAPED_CI_RUN_LINK})"
+          MESSAGE="🔢 Total tests: $TOTAL
+          🟩 Passed: $PASSED
+          🟥 Failed: $FAILED
+          🟧 Broken: $BROKEN
+          🟦 Skipped: $SKIPPED
+          ---
+          📝 Report: [open](${ESCAPED_REPORT_LINK})
+          📅 Data / time: ${ESCAPED_TIMESTAMP}
+          ⏱️ Execution time: $DURATION_FINAL
+          🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
           
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed 's|*|\\*|g; s|_|\\_|g; s|~|\\~|g')
           
