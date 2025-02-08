@@ -74,8 +74,10 @@ jobs:
           wedges, texts, autotexts = ax.pie(
           values, labels=None, autopct='%1.0f%%', colors=colors,
           startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
-          autotextprops={'fontsize': 10}
           )
+          
+          for autotext in autotexts:
+            autotext.set_fontsize(10)
           
           # Adding the center circle to create the 'donut' effect
           centre_circle = plt.Circle((0, 0), 0.60, fc='white')
@@ -107,7 +109,8 @@ jobs:
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
           
-          MESSAGE="📝 Отчет: [открыть](${ESCAPED_REPORT_LINK})
+          MESSAGE="
+          📝 Отчет: [открыть](${ESCAPED_REPORT_LINK})
           📅 Дата и время: ${ESCAPED_TIMESTAMP}
           🔢 Всего тестов: $TOTAL
           ✅ Успешных: $PASSED
