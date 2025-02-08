@@ -92,7 +92,8 @@ jobs:
           plt.gca().set_position([0, 0, 1, 1])  # Смещаем диаграмму влево
           for i, (label, color, value) in enumerate(zip(labels, colors, values)):
               plt.gcf().text(
-                  legend_x - 0.05, legend_y - i * 0.1,
+                  legend_x - 0.1,
+                  legend_y - i * 0.1,
                   f'{label}: {value}',
                   color='black', fontsize=10,
                   bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3'),
