@@ -56,32 +56,39 @@ jobs:
 
       - name: Generate test results chart
         run: |
-          echo "Passed $PASSED" > results.dat
-          echo "Failed $FAILED" >> results.dat
-          echo "Broken $BROKEN" >> results.dat
-          echo "Skipped $SKIPPED" >> results.dat
+          # Определяем углы секторов на основе количества тестов
+          TOTAL_SUM=$(($PASSED + $FAILED + $BROKEN + $SKIPPED))
+          ANGLE_PASSED=$(echo "360 * $PASSED / $TOTAL_SUM" | bc -l)
+          ANGLE_FAILED=$(echo "360 * $FAILED / $TOTAL_SUM" | bc -l)
+          ANGLE_BROKEN=$(echo "360 * $BROKEN / $TOTAL_SUM" | bc -l)
+          ANGLE_SKIPPED=$(echo "360 * $SKIPPED / $TOTAL_SUM" | bc -l)
 
+          # Записываем углы в файл для gnuplot
+          echo "0 $ANGLE_PASSED green Passed" > angles.dat
+          echo "$ANGLE_PASSED $(echo "$ANGLE_PASSED + $ANGLE_FAILED" | bc -l) red Failed" >> angles.dat
+          echo "$(echo "$ANGLE_PASSED + $ANGLE_FAILED" | bc -l) $(echo "$ANGLE_PASSED + $ANGLE_FAILED + $ANGLE_BROKEN" | bc -l) orange Broken" >> angles.dat
+          echo "$(echo "$ANGLE_PASSED + $ANGLE_FAILED + $ANGLE_BROKEN" | bc -l) 360 blue Skipped" >> angles.dat
+
+          # Генерируем круговую диаграмму
           gnuplot -e "
           set terminal pngcairo enhanced size 600,400;
           set output 'test_results_chart.png';
-          set title 'Test Results';
-          set style fill solid 1.0 border -1;
-          set boxwidth 0.5;
-          set key off;
-          set xrange [-1.2:1.2];
-          set yrange [-1.2:1.2];
-          set style data histogram;
-          set style histogram rowstacked;
-          set style fill solid border -1;
-          set label 1 'Passed' at 1,1.2 tc rgb 'green';
-          set label 2 'Failed' at 1,1.0 tc rgb 'red';
-          set label 3 'Broken' at 1,0.8 tc rgb 'orange';
-          set label 4 'Skipped' at 1,0.6 tc rgb 'blue';
-          plot 'results.dat' using 1:xtic(2) with boxes lc rgb 'green', \
-               '' using 1:xtic(2) with boxes lc rgb 'red', \
-               '' using 1:xtic(2) with boxes lc rgb 'orange', \
-               '' using 1:xtic(2) with boxes lc rgb 'blue';
+          set title 'Allure Test Results';
+          set size square;
+          set xrange [-1.1:1.1];
+          set yrange [-1.1:1.1];
+          unset key;
+          unset border;
+          unset tics;
+
+          set object 1 circle at 0,0 size 1 fillcolor rgb 'green' front;
+          set object 2 circle at 0,0 size 1 fillcolor rgb 'red' front;
+          set object 3 circle at 0,0 size 1 fillcolor rgb 'orange' front;
+          set object 4 circle at 0,0 size 1 fillcolor rgb 'blue' front;
+
+          plot 'angles.dat' using 1:2:(0.5):(0.5):(3) with circles lc rgb variable notitle;
           "
+
 
       - name: Send Telegram Notification
         run: |
@@ -94,15 +101,15 @@ jobs:
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
           
-          MESSAGE="📝 *Новый отчет Allure:* [открыть отчет](${ESCAPED_REPORT_LINK})%0A
-          📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A
-          🔢 Всего тестов: $TOTAL%0A
-          ✅ Успешных: $PASSED%0A
-          ❌ Проваленных: $FAILED%0A
-          ⚠️ Проблемных: $BROKEN%0A
-          ⏸️ Пропущенных: $SKIPPED%0A
-          ⏱️ Время выполнения: $DURATION_FINAL%0A
-          🔗 *Запуск:* [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
+          MESSAGE="📝 Отчет: [открыть отчет](${ESCAPED_REPORT_LINK})
+          📅 Дата и время: ${ESCAPED_TIMESTAMP}
+          🔢 Всего тестов: $TOTAL
+          ✅ Успешных: $PASSED
+          ❌ Проваленных: $FAILED
+          ⚠️ Проблемных: $BROKEN
+          ⏸️ Пропущенных: $SKIPPED
+          ⏱️ Время выполнения: $DURATION_FINAL
+          🔗 Запуск: [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
           
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed 's|*|\\*|g; s|_|\\_|g; s|~|\\~|g')
           
