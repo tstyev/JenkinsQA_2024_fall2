@@ -67,10 +67,17 @@ jobs:
           set title 'Allure Test Results';
           set style fill solid 1.0 border -1;
           set datafile separator space;
-          set style data pie;
           set key off;
-          plot 'results.dat' using 1:2 with pie;
+          set style data histograms;
+          set style histogram rowstacked;
+          set style fill solid border -1;
+          set xtics rotate by -45;
+          plot 'results.dat' using 1:xtic(2) with boxes lc rgb 'green', \
+               '' using 1:xtic(2) with boxes lc rgb 'red', \
+               '' using 1:xtic(2) with boxes lc rgb 'orange', \
+               '' using 1:xtic(2) with boxes lc rgb 'blue';
           "
+      
 
       - name: Send Telegram Notification
         run: |
