@@ -76,9 +76,6 @@ jobs:
               startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
           )
           
-          for autotext in autotexts:
-              autotext.set_fontsize(8)
-          
           # Добавляем центр круга для эффекта "пончика"
           centre_circle = plt.Circle((0, 0), 0.60, fc='white')
           fig.gca().add_artist(centre_circle)
@@ -92,24 +89,24 @@ jobs:
           plt.gca().set_position([0, 0, 1, 1])  # Смещаем диаграмму влево
           
           total = sum(values)
-          percentages = [(value / total) * 100 for value in values]
+          percentages = [(value / total) * 100 if total > 0 else 0 for value in values]
           
           for i, (label, color, value, percentage) in enumerate(zip(labels, colors, values, percentages)):
-              rect = patches.Rectangle(
-                  (legend_x - 0.07, legend_y - i * 0.1 - 0.025),
-                  0.05, 0.05, color=color, transform=ax.transAxes, clip_on=False
-              )
-              plt.gcf().add_artist(rect)
-          
-              plt.gcf().text(
-                  legend_x - 0.1,
-                  legend_y - i * 0.1,
-                  f'{value} ({percentage:.1f}%) - {label}',
-                  color='black', fontsize=10,
-                  bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3'),
-                  ha='left', va='center'
-              )
-              
+            rect = patches.Rectangle(
+              (legend_x - 0.07, legend_y - i * 0.1 - 0.025),
+              0.05, 0.05, color=color, transform=ax.transAxes, clip_on=False
+            )
+            plt.gcf().add_artist(rect)
+            
+            # Текст рядом с квадратами
+            plt.gcf().text(
+              legend_x - 0.15,
+              legend_y - i * 0.1,
+              f'{value} ({percentage:.1f}%) - {label}',  # Показываем проценты даже если они 0
+              color='black', fontsize=10,
+              bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3'),
+              ha='left', va='center'
+            )
           
           # Сохраняем картинку с минимальными отступами
           plt.savefig('chart.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
