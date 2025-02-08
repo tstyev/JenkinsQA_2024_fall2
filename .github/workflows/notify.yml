@@ -72,7 +72,7 @@ jobs:
           
           fig, ax = plt.subplots(figsize=(3, 2))  # Уменьшаем диаграмму
           wedges, texts, autotexts = ax.pie(
-              values, labels=None, autopct=None, colors=colors,
+              values, labels=None, autopct='%1.1f%%', colors=colors,
               startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
           )
           
@@ -91,7 +91,7 @@ jobs:
           total = sum(values)
           percentages = [(value / total) * 100 if total > 0 else 0 for value in values]
           
-          for i, (label, color, value, percentage) in enumerate(zip(labels, colors, values, percentages)):
+          for i, (label, color, value) in enumerate(zip(labels, colors, values)):
             rect = patches.Rectangle(
               (legend_x - 0.07, legend_y - i * 0.1 - 0.025),
               0.05, 0.05, color=color, transform=ax.transAxes, clip_on=False
@@ -102,7 +102,7 @@ jobs:
             plt.gcf().text(
               legend_x - 0.15,
               legend_y - i * 0.1,
-              f'{value} ({percentage:.1f}%) - {label}',  # Показываем проценты даже если они 0
+              f'{value} - {label}',
               color='black', fontsize=10,
               bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3'),
               ha='left', va='center'
@@ -126,6 +126,7 @@ jobs:
           MESSAGE="📝 Report: [open](${ESCAPED_REPORT_LINK})
           📅 Data / time: ${ESCAPED_TIMESTAMP}
           ⏱️ Execution time: $DURATION_FINAL
+          ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
           🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
           
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed 's|*|\\*|g; s|_|\\_|g; s|~|\\~|g')
