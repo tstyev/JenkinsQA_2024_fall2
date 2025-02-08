@@ -31,16 +31,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install jq and ImageMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq imagemagick
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y gnuplot jq
 
       - name: Fetch test results from Allure report
         run: |
           REPORT_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
           wget -q -O summary.json "$REPORT_URL"
-          
+
           PASSED=$(jq '.statistic.passed' summary.json)
           FAILED=$(jq '.statistic.failed' summary.json)
           BROKEN=$(jq '.statistic.broken' summary.json)
@@ -48,13 +46,31 @@ jobs:
           TOTAL=$(jq '.statistic.total' summary.json)
           DURATION=$(jq '.time.duration' summary.json)
           DURATION_FINAL=$(date -ud @$((DURATION / 1000)) +'%M:%S')
-          
+
           echo "PASSED=$PASSED" >> $GITHUB_ENV
           echo "FAILED=$FAILED" >> $GITHUB_ENV
           echo "BROKEN=$BROKEN" >> $GITHUB_ENV
           echo "SKIPPED=$SKIPPED" >> $GITHUB_ENV
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
+
+      - name: Generate test results chart
+        run: |
+          echo "Passed $PASSED" > results.dat
+          echo "Failed $FAILED" >> results.dat
+          echo "Broken $BROKEN" >> results.dat
+          echo "Skipped $SKIPPED" >> results.dat
+
+          gnuplot -e "
+          set terminal pngcairo enhanced size 600,400;
+          set output 'test_results_chart.png';
+          set title 'Allure Test Results';
+          set xlabel 'Test Categories';
+          set ylabel 'Number of Tests';
+          set grid;
+          set style data linespoints;
+          plot 'results.dat' using 2:xtic(1) with linespoints title 'Tests';
+          "
 
       - name: Download the chart image from Allure report
         run: |
