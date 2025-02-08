@@ -56,14 +56,10 @@ jobs:
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
-      - name: Debug Image File
+      - name: Download the chart image from Allure report
         run: |
-          ls -lah test_results.png || echo "Файл отсутствует!"
-          file test_results.png || echo "Файл поврежден!"
-
-      - name: Convert image to color
-        run: |
-          convert test_results.png -colorspace RGB test_results_color.png
+          CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.png"
+          wget -q -O test_results.png "$CHART_URL"
 
       - name: Send Telegram Notification
         run: |
