@@ -60,7 +60,7 @@ jobs:
           python -c "
           import matplotlib.pyplot as plt
           import os
-          from matplotlib.patches as patches
+          from matplotlib import patches  # Исправленный импорт
           
           passed = int(os.getenv('PASSED', 0))
           failed = int(os.getenv('FAILED', 0))
@@ -71,50 +71,42 @@ jobs:
           values = [passed, failed, broken, skipped]
           colors = ['#8BC34A', '#F44336', '#FF9800', '#2196F3']
           
-          fig, ax = plt.subplots(figsize=(3, 2))  # Reduce figure size
+          fig, ax = plt.subplots(figsize=(3, 2))  # Уменьшаем диаграмму
           wedges, texts, autotexts = ax.pie(
-          values, labels=None, autopct='%1.0f%%', colors=colors,
-          startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
+              values, labels=None, autopct='%1.0f%%', colors=colors,
+              startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
           )
           
           for autotext in autotexts:
               autotext.set_fontsize(8)
           
+          # Добавляем центр круга для эффекта "пончика"
           centre_circle = plt.Circle((0, 0), 0.60, fc='white')
           fig.gca().add_artist(centre_circle)
           
-          ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
+          # Добавляем количество тестов в центре диаграммы
+          ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=14, fontweight='bold')
           
+          # Добавляем легенду сбоку в виде цветных квадратиков и текста
           legend_x = 1.2
           legend_y = 0.2
           plt.gca().set_position([0, 0, 0.75, 1])  # Смещаем диаграмму влево
           for i, (label, color, value) in enumerate(zip(labels, colors, values)):
-            plt.gcf().text(
-                legend_x, legend_y - i * 0.15,
-                f'{label}: {value}',
-                color='black', fontsize=10, fontweight='bold',
-                bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3')
-          )
+              plt.gcf().text(
+                  legend_x, legend_y - i * 0.15,
+                  f'{label}: {value}',
+                  color='black', fontsize=10, fontweight='bold',
+                  bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3')
+              )
+              # Добавляем цветной квадрат перед текстом
+              rect = patches.Rectangle(
+                  (legend_x - 0.05, legend_y - i * 0.15 - 0.02),
+                  0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
+              )
+              plt.gcf().add_artist(rect)
           
-          rect = patches.Rectangle(
-            (legend_x - 0.05, legend_y - i * 0.15 - 0.02),
-            0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
-          )
-          plt.gcf().add_artist(rect)
-        
-          #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))
-          #          ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
-          #      
-          #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos - 0.2), 0.1, 0.1, color='#F44336'))
-          #          ax.text(text_x_pos + 0.12, text_y_pos - 0.15, f'Failed: {failed}', fontsize=12, ha='left', va='center', color='black')
-          #      
-          #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos - 0.4), 0.1, 0.1, color='#FF9800'))
-          #          ax.text(text_x_pos + 0.12, text_y_pos - 0.35, f'Broken: {broken}', fontsize=12, ha='left', va='center', color='black')
-          #      
-          #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos - 0.6), 0.1, 0.1, color='#2196F3'))
-          #          ax.text(text_x_pos + 0.12, text_y_pos - 0.55, f'Skipped: {skipped}', fontsize=12, ha='left', va='center', color='black')
-          #                                                               
-          plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.01)
+          # Сохраняем картинку с минимальными отступами
+          plt.savefig('test_results_donut_chart.png', dpi=250, bbox_inches='tight', pad_inches=0.05)
           "
 
       - name: Send Telegram Notification
