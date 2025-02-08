@@ -87,9 +87,9 @@ jobs:
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
           # Добавляем легенду сбоку в виде цветных квадратиков и текста
-          legend_x = 1.15
+          legend_x = 1.05
           legend_y = 0.5
-          plt.gca().set_position([0, 0, 0.85, 1])  # Смещаем диаграмму влево
+          plt.gca().set_position([0, 0, 0.8, 1])  # Смещаем диаграмму влево
           
           total = sum(values)
           percentages = [(value / total) * 100 if total > 0 else 0 for value in values]
@@ -103,7 +103,7 @@ jobs:
             
             # Текст рядом с квадратами
             plt.gcf().text(
-              legend_x - 0.15,
+              legend_x - 0.12,
               legend_y - i * 0.1,
               f'{value} - {label}',
               color='black', fontsize=10,
