@@ -93,6 +93,8 @@ jobs:
           image = Image.open("test_results_donut_chart.png")
           image = image.resize((image.width // 2, image.height // 2), Image.Resampling.LANCZOS)
           image.save("test_results_donut_chart_resized.png")
+          
+          plt.close()
           "
 
       - name: Send Telegram Notification
