@@ -56,15 +56,14 @@ jobs:
           echo "TOTAL=$TOTAL" >> $GITHUB_ENV
           echo "DURATION_FINAL=$DURATION_FINAL" >> $GITHUB_ENV
 
-      - name: Create Test Results Image
-        run: |
-          convert -size 400x200 xc:white -gravity center -pointsize 20 \
-          -fill black -annotate +0+0 "Test Results" test_results.png
-
       - name: Debug Image File
         run: |
           ls -lah test_results.png || echo "Файл отсутствует!"
           file test_results.png || echo "Файл поврежден!"
+
+      - name: Convert image to color
+        run: |
+          convert test_results.png -colorspace RGB test_results_color.png
 
       - name: Send Telegram Notification
         run: |
