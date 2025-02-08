@@ -76,6 +76,9 @@ jobs:
               startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
           )
           
+          for autotext in autotexts:
+              autotext.set_fontsize(8)
+          
           # Добавляем центр круга для эффекта "пончика"
           centre_circle = plt.Circle((0, 0), 0.60, fc='white')
           fig.gca().add_artist(centre_circle)
@@ -84,9 +87,9 @@ jobs:
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
           # Добавляем легенду сбоку в виде цветных квадратиков и текста
-          legend_x = 1.05
+          legend_x = 1.15
           legend_y = 0.5
-          plt.gca().set_position([0, 0, 1, 1])  # Смещаем диаграмму влево
+          plt.gca().set_position([0, 0, 0.85, 1])  # Смещаем диаграмму влево
           
           total = sum(values)
           percentages = [(value / total) * 100 if total > 0 else 0 for value in values]
