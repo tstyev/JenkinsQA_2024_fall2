@@ -60,7 +60,7 @@ jobs:
           python -c "
           import matplotlib.pyplot as plt
           import os
-          from matplotlib import patches
+          from matplotlib.patches as patches
           
           passed = int(os.getenv('PASSED', 0))
           failed = int(os.getenv('FAILED', 0))
@@ -96,10 +96,11 @@ jobs:
                 bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3')
           )
           
-          plt.gcf().add_artist(mpatches.Rectangle(
-              (legend_x - 0.05, legend_y - i * 0.15 - 0.02),
-              0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
-          ))
+          rect = patches.Rectangle(
+            (legend_x - 0.05, legend_y - i * 0.15 - 0.02),
+            0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
+          )
+          plt.gcf().add_artist(rect)
         
           #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))
           #          ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
