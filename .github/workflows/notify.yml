@@ -59,19 +59,25 @@ jobs:
           CHART_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/categories-trend.json"
           wget -q -O test_results.png "$CHART_URL"
 
-      - name: Send Telegram Notification with chart
+      - name: Send Telegram Notification
         run: |
           REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
-          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+          CI_RUN_LINK="https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
           
-          MESSAGE="📝 *Новый отчет Allure:* [открыть отчет]($REPORT_LINK)%0A
-            📅 Дата и время: $(date +"%Y-%m-%d %H:%M:%S")%0A
-            🔢 Всего тестов: $TOTAL%0A
-            ✅ Успешных: $PASSED%0A
-            ❌ Проваленных: $FAILED%0A
-            ⚠️ Проблемных: $BROKEN%0A
-            ⏱️ Время выполнения: $DURATION_FINAL%0A
-            🔗 *Запуск:* [посмотреть запуск]($CI_RUN_LINK)"
+          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          
+          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
+          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
+          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|\.|\\.|g; s|-|\\-|g; s|_|\\_|g; s|:|\\:|g')
+          
+          MESSAGE="📝 *Новый отчет Allure:* [открыть отчет](${ESCAPED_REPORT_LINK})%0A
+          📅 Дата и время: ${ESCAPED_TIMESTAMP}%0A
+          🔢 Всего тестов: $TOTAL%0A
+          ✅ Успешных: $PASSED%0A
+          ❌ Проваленных: $FAILED%0A
+          ⚠️ Проблемных: $BROKEN%0A
+          ⏱️ Время выполнения: $DURATION_FINAL%0A
+          🔗 *Запуск:* [посмотреть запуск](${ESCAPED_CI_RUN_LINK})"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
           -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
