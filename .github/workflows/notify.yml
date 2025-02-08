@@ -60,6 +60,7 @@ jobs:
           python -c "
           import matplotlib.pyplot as plt
           import os
+          from matplotlib import patches
           
           passed = int(os.getenv('PASSED', 0))
           failed = int(os.getenv('FAILED', 0))
