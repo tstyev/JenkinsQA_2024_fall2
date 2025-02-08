@@ -106,7 +106,6 @@ jobs:
           🟥 Failed: $FAILED
           🟧 Broken: $BROKEN
           🟦 Skipped: $SKIPPED
-          ---
           📝 Report: [open](${ESCAPED_REPORT_LINK})
           📅 Data / time: ${ESCAPED_TIMESTAMP}
           ⏱️ Execution time: $DURATION_FINAL
