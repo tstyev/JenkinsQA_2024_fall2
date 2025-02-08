@@ -70,20 +70,29 @@ jobs:
           values = [passed, failed, broken, skipped]
           colors = ["#8BC34A", "#F44336", "#FF9800", "#2196F3"]
           
+          # Calculate percentages
+          total = sum(values)
+          percentages = [f'{(v / total) * 100:.1f}%' for v in values]
+          
           fig, ax = plt.subplots(figsize=(6, 6))
           wedges, texts, autotexts = ax.pie(
               values, labels=None, autopct='%1.0f%%', colors=colors, 
               startangle=90, wedgeprops={"edgecolor": "white", "linewidth": 2}, pctdistance=0.85
           )
-          
-          # Adding the center circle to create the "donut" effect
+
+          # Add center for donut effect
           centre_circle = plt.Circle((0, 0), 0.65, fc="white")
           fig.gca().add_artist(centre_circle)
-          
-          # Add the total number of tests in the center
-          ax.text(0, 0, str(sum(values)), ha="center", va="center", fontsize=20, fontweight="bold")
-          
-          # Save the figure
+
+          # Add percentage labels to separate blocks
+          for i, wedge in enumerate(wedges):
+              ax.text(wedge.get_center()[0] * 1.2, wedge.get_center()[1] * 1.2, f'{labels[i]}: {percentages[i]}', 
+                      ha='center', fontsize=12, fontweight='bold', color=colors[i])
+
+          # Add total tests count in the center
+          ax.text(0, 0, str(total), ha="center", va="center", fontsize=20, fontweight="bold")
+
+          # Save image
           plt.savefig("test_results_donut_chart.png", dpi=300)
           EOF
       
