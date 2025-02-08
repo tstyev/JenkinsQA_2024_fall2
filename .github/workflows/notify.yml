@@ -71,7 +71,7 @@ jobs:
           values = [passed, failed, broken, skipped]
           colors = ['#8BC34A', '#F44336', '#FF9800', '#2196F3']
           
-          fig, ax = plt.subplots(figsize=(6, 4))  # Reduce figure size
+          fig, ax = plt.subplots(figsize=(3, 2))  # Reduce figure size
           wedges, texts, autotexts = ax.pie(
           values, labels=None, autopct='%1.0f%%', colors=colors,
           startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
@@ -85,21 +85,21 @@ jobs:
           
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
-          # Позиция для текста и квадратиков
-          text_x_pos = 1.5  # Позиция для текста по оси X
-          text_y_pos = 0.8  # Начальная позиция для текста по оси Y
-          offset_y = 0.2  # Смещение по оси Y для следующего квадратика
-          
           legend_x = 1.2
           legend_y = 0.2
-          plt.gca().set_position([0, 0, 0.8, 1])  # Смещаем диаграмму влево
+          plt.gca().set_position([0, 0, 0.75, 1])  # Смещаем диаграмму влево
           for i, (label, color, value) in enumerate(zip(labels, colors, values)):
             plt.gcf().text(
                 legend_x, legend_y - i * 0.15,
-                f'■ {label}: {value}',
+                f'{label}: {value}',
                 color='black', fontsize=10, fontweight='bold',
                 bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3')
-            )
+          )
+          
+          plt.gcf().add_artist(mpatches.Rectangle(
+              (legend_x - 0.05, legend_y - i * 0.15 - 0.02),
+              0.03, 0.03, color=color, transform=plt.gcf().transFigure, clip_on=False
+          ))
         
           #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))
           #          ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
