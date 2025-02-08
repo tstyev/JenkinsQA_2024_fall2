@@ -119,9 +119,8 @@ jobs:
           
           TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
           
-          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
-          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g')
-  
+          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
+          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
           ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
           
           MESSAGE="📝 Report: [open](${ESCAPED_REPORT_LINK})
