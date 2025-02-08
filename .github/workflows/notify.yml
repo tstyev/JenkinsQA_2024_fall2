@@ -85,21 +85,24 @@ jobs:
           
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
-          text_x_pos = 1.5
-          text_y_pos = 0.8 
+          # Позиция для текста и квадратиков
+          text_x_pos = 1.5  # Позиция для текста по оси X
+          text_y_pos = 0.8  # Начальная позиция для текста по оси Y
+          offset_y = 0.2  # Смещение по оси Y для следующего квадратика
           
+          # Рисуем цветные квадратики и добавляем текст
           ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))  # Passed
           ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
-      
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 0.2), 0.1, 0.1, color='#F44336'))  # Failed
-          ax.text(text_x_pos + 0.12, text_y_pos - 0.15, f'Failed: {failed}', fontsize=12, ha='left', va='center', color='black')
-      
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 0.4), 0.1, 0.1, color='#FF9800'))  # Broken
-          ax.text(text_x_pos + 0.12, text_y_pos - 0.35, f'Broken: {broken}', fontsize=12, ha='left', va='center', color='black')
-      
-          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 0.6), 0.1, 0.1, color='#2196F3'))  # Skipped
-          ax.text(text_x_pos + 0.12, text_y_pos - 0.55, f'Skipped: {skipped}', fontsize=12, ha='left', va='center', color='black')
-  
+          
+          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - offset_y), 0.1, 0.1, color='#F44336'))  # Failed
+          ax.text(text_x_pos + 0.12, text_y_pos - offset_y + 0.05, f'Failed: {failed}', fontsize=12, ha='left', va='center', color='black')
+                
+          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 2*offset_y), 0.1, 0.1, color='#FF9800'))  # Broken
+          ax.text(text_x_pos + 0.12, text_y_pos - 2*offset_y + 0.05, f'Broken: {broken}', fontsize=12, ha='left', va='center', color='black')
+          
+          ax.add_patch(patches.Rectangle((text_x_pos, text_y_pos - 3*offset_y), 0.1, 0.1, color='#2196F3'))  # Skipped
+          ax.text(text_x_pos + 0.12, text_y_pos - 3*offset_y + 0.05, f'Skipped: {skipped}', fontsize=12, ha='left', va='center', color='black')
+          
           #          ax.add_patch(plt.Rectangle((text_x_pos, text_y_pos), 0.1, 0.1, color='#8BC34A'))
           #          ax.text(text_x_pos + 0.12, text_y_pos + 0.05, f'Passed: {passed}', fontsize=12, ha='left', va='center', color='black')
           #      
