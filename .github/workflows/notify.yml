@@ -59,7 +59,7 @@ jobs:
           python -c "
           import matplotlib.pyplot as plt
           import os
-          from matplotlib import patches  # Исправленный импорт
+          from matplotlib import patches 
           
           passed = int(os.getenv('PASSED', 0))
           failed = int(os.getenv('FAILED', 0))
@@ -70,7 +70,7 @@ jobs:
           values = [passed, failed, broken, skipped]
           colors = ['#8BC34A', '#F44336', '#FF9800', '#2196F3']
           
-          fig, ax = plt.subplots(figsize=(3, 2))  # Уменьшаем диаграмму
+          fig, ax = plt.subplots(figsize=(3, 2))
           wedges, texts, autotexts = ax.pie(
               values, labels=None, autopct='%1.1f%%', colors=colors,
               startangle=90, wedgeprops={'edgecolor': 'white', 'linewidth': 2}, pctdistance=0.85,
