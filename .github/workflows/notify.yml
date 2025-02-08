@@ -31,8 +31,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Install jq and ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq imagemagick
 
       - name: Fetch test results from Allure report
         run: |
