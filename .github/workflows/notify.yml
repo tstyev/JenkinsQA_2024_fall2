@@ -92,7 +92,7 @@ jobs:
           plt.gca().set_position([0, 0, 1, 1])  # Смещаем диаграмму влево
           for i, (label, color, value) in enumerate(zip(labels, colors, values)):
               plt.gcf().text(
-                  legend_x, legend_y - i * 0.1,
+                  legend_x - 0.05, legend_y - i * 0.1,
                   f'{label}: {value}',
                   color='black', fontsize=10,
                   bbox=dict(facecolor='white', edgecolor='white', boxstyle='square,pad=0.3'),
@@ -100,13 +100,13 @@ jobs:
               )
               # Добавляем цветной квадрат перед текстом
               rect = patches.Rectangle(
-                  (legend_x - 0.07, legend_y - i * 0.1 - 0.015),
-                  0.03, 0.03, color=color, transform=ax.transAxes, clip_on=False
+                  (legend_x - 0.07, legend_y - i * 0.1 - 0.025),
+                  0.05, 0.05, color=color, transform=ax.transAxes, clip_on=False
               )
               plt.gcf().add_artist(rect)
           
           # Сохраняем картинку с минимальными отступами
-          plt.savefig('test_results_donut_chart.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+          plt.savefig('chart.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
           "
 
       - name: Send Telegram Notification
@@ -129,7 +129,7 @@ jobs:
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
           -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-          -F photo="@test_results_donut_chart.png" \
+          -F photo="@chart.png" \
           -F caption="$ESCAPED_MESSAGE" \
           -F parse_mode="MarkdownV2"
 
