@@ -87,8 +87,8 @@ jobs:
           ax.text(0, 0, str(sum(values)), ha='center', va='center', fontsize=16, fontweight='bold')
           
           legend_x = 1.05
-          legend_y = 0.7
-          plt.gca().set_position([0, 0, 0.8, 1])  # Смещаем диаграмму влево
+          legend_y = 0.6
+          plt.gca().set_position([0, 0, 0.6, 1])  # Смещаем диаграмму влево
           
           total = sum(values)
           percentages = [(value / total) * 100 if total > 0 else 0 for value in values]
