@@ -125,7 +125,7 @@ jobs:
           ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|-|\\-|g; s|\.|\\.|g; s|_|\\_|g; s|:|\\:|g; s|/|\\/|g'
           
           MESSAGE="📝 Report: [open](${ESCAPED_REPORT_LINK})
-          📅 Data / time: ${ESCAPED_TIMESTAMP}
+          📅 Data and time: ${ESCAPED_TIMESTAMP}
           ⏱️ Execution time: $DURATION_FINAL
           ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
           🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
