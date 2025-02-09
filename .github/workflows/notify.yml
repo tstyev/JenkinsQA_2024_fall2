@@ -132,7 +132,8 @@ jobs:
           ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
           🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
           
-          ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([]\`*_{}\[\]()#+\-!|])/\\\1/g')
+          ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([]\`*_{}\[\]()#+\-!|()])/\\\1/g')
+          
           
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
