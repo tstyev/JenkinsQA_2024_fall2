@@ -39,7 +39,7 @@ jobs:
 
       - name: Fetch test results from Allure report
         run: |
-          REPORT_URL="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
+          REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
           
           wget -q -O summary.json "$REPORT_URL" || { echo "Failed to download report"; exit 1; }
           
@@ -119,8 +119,8 @@ jobs:
 
       - name: Send Telegram Notification
         run: |
-          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
-          CI_RUN_LINK="https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+          REPORT_LINK="https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${{ steps.find_ci_run.outputs.run_number }}/"
+          CI_RUN_LINK="https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
 
           TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
 
