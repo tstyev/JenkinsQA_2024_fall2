@@ -135,7 +135,7 @@ jobs:
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([\\`*_{}\[\]()#+\-!|<>])/\\\1/g')
 
 
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument" \
           -F chat_id="@team_jenkins_2024_fall" \
           -F photo="@chart.png"
 #          -F parse_mode="MarkdownV2"
