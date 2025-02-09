@@ -126,7 +126,7 @@ jobs:
             ⏱️ Execution time: $DURATION_FINAL
             ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
             🔗 Run: [see](https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }})
-          parse_mode: "MarkdownV2"
+          format: markdown
           
 
 #      - name: Send Telegram Notification
