@@ -114,32 +114,45 @@ jobs:
           plt.savefig('chart.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
           "
 
-      - name: Send Telegram Notification
-        run: |
-          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
-          CI_RUN_LINK="https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
-          
-          TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
-          
-          
-          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
-          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
-          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
-          
-          MESSAGE="📝 Report: [open](${ESCAPED_REPORT_LINK})
-          📅 Data and time: ${ESCAPED_TIMESTAMP}
-          ⏱️ Execution time: $DURATION_FINAL
-          ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
-          🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
-          
-          ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([\\`*_{}\[\]()#+\-!|<>])/\\\1/g')
-        
-          
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
-          -F caption="$ESCAPED_MESSAGE" \
-          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-          -F photo="@chart.png" \
-          -F parse_mode="MarkdownV2"
+      - name: Send Telegram Notification (via Telegram action)
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            📝 Report: [open](https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/)
+            📅 Data and time: $(date +"%Y.%m.%d %H:%M:%S")
+            ⏱️ Execution time: $DURATION_FINAL
+            ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
+            🔗 Run: [see](https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }})
+          photo: chart.png
+
+#      - name: Send Telegram Notification
+#        run: |
+#          REPORT_LINK="https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/"
+#          CI_RUN_LINK="https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+#
+#          TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
+#
+#
+#          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
+#          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
+#          ESCAPED_TIMESTAMP=$(echo "$TIMESTAMP" | sed 's|-|\\-|g; s|\.|\\.|g')
+#
+#          MESSAGE="📝 Report: [open](${ESCAPED_REPORT_LINK})
+#          📅 Data and time: ${ESCAPED_TIMESTAMP}
+#          ⏱️ Execution time: $DURATION_FINAL
+#          ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
+#          🔗 Run: [see](${ESCAPED_CI_RUN_LINK})"
+#
+#          ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([\\`*_{}\[\]()#+\-!|<>])/\\\1/g')
+#
+#
+#          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
+#          -F caption="$ESCAPED_MESSAGE" \
+#          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+#          -F photo="@chart.png" \
+#          -F parse_mode="MarkdownV2"
 
 #          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
 #          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
