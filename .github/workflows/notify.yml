@@ -138,8 +138,8 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
           -F chat_id="-1002222760706" \
           -F photo="@chart.png" \
-          -F caption="$ESCAPED_MESSAGE" \
           -F parse_mode="MarkdownV2"
+#          -F caption="$ESCAPED_MESSAGE" \
 #          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
 
 #          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
