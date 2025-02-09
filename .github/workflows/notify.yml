@@ -135,10 +135,10 @@ jobs:
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([\\`*_{}\[\]()#+\-!|<>])/\\\1/g')
 
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
-          -F chat_id="@team_jenkins_2024_fall" \
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
           -F photo="@chart.png" \
-          -F caption="$ESCAPED_MESSAGE"
-#          -F parse_mode="MarkdownV2"
+          -F caption="$ESCAPED_MESSAGE" \
+          -F parse_mode="MarkdownV2"
 
 #          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
 #          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
