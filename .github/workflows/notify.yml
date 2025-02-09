@@ -134,27 +134,11 @@ jobs:
 
           ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed -E 's/([\\`*_{}\[\]()#+\-!|<>])/\\\1/g')
 
-          JSON_PAYLOAD=$(jq -n \
-          --arg chat_id "${{ secrets.TELEGRAM_CHAT_ID }}" \
-          --arg photo "https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/chart.png" \
-          --arg caption "$ESCAPED_MESSAGE" \
-          --arg parse_mode "MarkdownV2" \
-          '{
-          chat_id: $chat_id,
-          photo: $photo,
-          caption: $caption,
-          parse_mode: $parse_mode
-          }')
-
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
-            --header "Content-Type: application/json" \
-            --data "$JSON_PAYLOAD"
-
-#          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
-#          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-#          -F photo="@chart.png" \
-#          -F caption="$ESCAPED_MESSAGE" \
-#          -F parse_mode="MarkdownV2"
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -F photo="@chart.png" \
+          -F caption="$ESCAPED_MESSAGE" \
+          -F parse_mode="MarkdownV2"
 
 #          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
 #          ESCAPED_CI_RUN_LINK=$(echo "$CI_RUN_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
