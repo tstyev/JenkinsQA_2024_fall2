@@ -136,9 +136,9 @@ jobs:
 
 
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendPhoto" \
-          -F caption="$ESCAPED_MESSAGE" \
           -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
           -F photo="@chart.png" \
+          -F caption="$ESCAPED_MESSAGE" \
           -F parse_mode="MarkdownV2"
 
 #          ESCAPED_REPORT_LINK=$(echo "$REPORT_LINK" | sed 's|:|\\:|g; s|/|\\/|g')
