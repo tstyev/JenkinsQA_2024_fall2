@@ -122,7 +122,7 @@ jobs:
           photo: chart.png
           message: |
             📝 Report: [open](https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/)
-            📅 Data and time: $(date +"%Y.%m.%d %H:%M:%S")
+            📅 Data and time: ${{ github.event.head_commit.timestamp }}
             ⏱️ Execution time: $DURATION_FINAL
             ⚙️ Build: ${{ steps.find_ci_run.outputs.run_number }}
             🔗 Run: [see](https://github.com/evgnick/JenkinsQA_2024_fall2/actions/runs/${{ steps.find_ci_run.outputs.run_id }})
