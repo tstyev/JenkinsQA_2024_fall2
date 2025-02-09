@@ -121,12 +121,6 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           photo: chart.png
           caption: |
-            📝 Results Overview:
-            - Passed: $PASSED
-            - Failed: $FAILED
-            - Broken: $BROKEN
-            - Skipped: $SKIPPED
-          message: |
             📝 Report: [open](https://evgnick.github.io/JenkinsQA_2024_fall2/${{ steps.find_ci_run.outputs.run_number }}/)
             📅 Data and time: $(date +"%Y.%m.%d %H:%M:%S")
             ⏱️ Execution time: $DURATION_FINAL
