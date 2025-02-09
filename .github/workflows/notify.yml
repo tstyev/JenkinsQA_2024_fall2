@@ -7,7 +7,6 @@ on:
       - completed
   workflow_dispatch:
 
-
 jobs:
   notify:
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
@@ -39,7 +38,7 @@ jobs:
 
       - name: Fetch test results from Allure report
         run: |
-          REPORT_URL="https://github.com/${{ github.repository_owner }}/${{ github.repository }}/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
+          REPORT_URL="https://github.com/${{ github.repository }}/${{ steps.find_ci_run.outputs.run_number }}/widgets/summary.json"
           
           wget -q -O summary.json "$REPORT_URL" || { echo "Failed to download report"; exit 1; }
           
@@ -120,7 +119,7 @@ jobs:
       - name: Send Telegram Notification
         run: |
           REPORT_LINK="https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${{ steps.find_ci_run.outputs.run_number }}/"
-          CI_RUN_LINK="https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
+          CI_RUN_LINK="https://github.com/${{ github.repository }}/actions/runs/${{ steps.find_ci_run.outputs.run_id }}"
 
           TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
 
