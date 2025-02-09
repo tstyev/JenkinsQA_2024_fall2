@@ -5,6 +5,8 @@ on:
     workflows: [ "pages-build-deployment" ]
     types:
       - completed
+  workflow_dispatch:
+
 
 jobs:
   notify:
