@@ -102,19 +102,20 @@ jobs:
         run: |
           # Проверяем, существует ли файл данных
           if [ -f "gh-pages/131/export/influxDbData.txt" ]; then
-            echo "InfluxDB data found. Processing data..."
-
+          echo "InfluxDB data found. Processing data..."
+          
           # Преобразуем наносекунды в миллисекунды
-          sed -i 's/\([0-9]\{19\}\)/echo "\1 / 1000000" | bc/e' gh-pages/131/export/influxDbData.txt
-
+          sed -i 's#\([0-9]\{19\}\)#echo "\1 / 1000000" | bc#e' gh-pages/131/export/influxDbData.txt
+          
           echo "InfluxDB data processed."
-
+          
           # Отправляем данные в InfluxDB
           curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=ms" \
-            --header "Authorization: Token ***" \
-            --data-binary @"gh-pages/131/export/influxDbData.txt"
-
-            echo "InfluxDB data sent."
+          --header "Authorization: Token ***" \
+          --data-binary @"gh-pages/131/export/influxDbData.txt"
+          
+          echo "InfluxDB data sent."
           else
-            echo "No InfluxDB data found."
+          echo "No InfluxDB data found."
           fi
+
