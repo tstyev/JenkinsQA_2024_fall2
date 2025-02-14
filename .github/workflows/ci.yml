@@ -76,6 +76,23 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      - name: Debug Allure Export
+        if: always()
+        run: ls -R target/allure-results/ || echo "No such directory"
+
+      - name: Export Allure data
+        if: always()
+        run: |
+          mkdir -p allure-report/export
+          mv target/allure-results/export/influxDbData.txt allure-report/export/influxDbData.txt
+
+      - name: Send report to InfluxDB
+        if: always()
+        run: |
+          curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
+            --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
+            --data-binary @allure-report/export/influxDbData.txt
+
       - name: Queue deployment
         uses: softprops/turnstyle@v1
         with:
@@ -91,23 +108,3 @@ jobs:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: allure-history
-
-      - name: Export Allure data
-        if: always()
-        run: |
-          mkdir -p allure-report/export
-          mv target/allure-results/export/influxDbData.txt allure-report/export/influxDbData.txt
-
-      - name: Send report to InfluxDB
-        if: always()
-        run: |
-          curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
-            --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
-            --data-binary @allure-report/export/influxDbData.txt
-
-      - name: Send report to InfluxDB
-        if: always()
-        run: |
-          curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
-            --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
-            --data-binary @allure-report/export/influxDbData.txt
