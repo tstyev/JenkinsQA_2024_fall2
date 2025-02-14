@@ -101,7 +101,6 @@ jobs:
         if: always()
         run: |
           mkdir -p allure-report/export
-          chmod -R 777 allure-report/export  # Убедитесь, что у вас есть права на запись
           if [ -f "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" ]; then
             cp "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" allure-report/export/influxDbData.txt
             echo "InfluxDB data copied."
