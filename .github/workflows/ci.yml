@@ -106,7 +106,7 @@ jobs:
             echo "InfluxDB data found. Sending to InfluxDB..."
 
             # Отправляем данные напрямую в InfluxDB
-            curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
+            curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=ms" \
               --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
               --data-binary @"gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt"
 
