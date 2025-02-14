@@ -100,12 +100,10 @@ jobs:
       - name: Send InfluxDB data to InfluxDB
         if: always()
         run: |
-          # Убедитесь, что файл существует
           echo "Checking if InfluxDB data exists on GitHub Pages..."
           if [ -f "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" ]; then
             echo "InfluxDB data found. Sending to InfluxDB..."
 
-            # Отправляем данные напрямую в InfluxDB
             curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=ns" \
               --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
               --data-binary @"gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt"
