@@ -76,22 +76,22 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
-      - name: Debug Allure Export
-        if: always()
-        run: ls -R target/allure-results/ || echo "No such directory"
-
-      - name: Export Allure data
+      - name: Copy Allure export data from history
         if: always()
         run: |
           mkdir -p allure-report/export
-          mv target/allure-results/export/influxDbData.txt allure-report/export/influxDbData.txt
+          cp -r allure-history/export/* allure-report/export/ || echo "No export data found"
 
       - name: Send report to InfluxDB
         if: always()
         run: |
-          curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
-            --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
-            --data-binary @allure-report/export/influxDbData.txt
+          if [ -f allure-report/export/influxDbData.txt ]; then
+            curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
+              --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
+              --data-binary @allure-report/export/influxDbData.txt
+          else
+            echo "No influxDbData.txt found, skipping InfluxDB upload"
+          fi
 
       - name: Queue deployment
         uses: softprops/turnstyle@v1
