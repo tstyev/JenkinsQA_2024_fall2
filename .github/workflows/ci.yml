@@ -97,24 +97,20 @@ jobs:
           LATEST_RUN_ID=$(ls -1 gh-pages | sort -n | tail -1)
           echo "LATEST_RUN_ID=$LATEST_RUN_ID" >> $GITHUB_ENV
 
-      - name: Download InfluxDB data from GitHub Pages
+      - name: Send InfluxDB data to InfluxDB
         if: always()
         run: |
-          mkdir -p allure-report/export
+          # Убедитесь, что файл существует
+          echo "Checking if InfluxDB data exists on GitHub Pages..."
           if [ -f "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" ]; then
-            cp "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" allure-report/export/influxDbData.txt
-            echo "InfluxDB data copied."
-          else
-            echo "No InfluxDB data found."
-          fi
+            echo "InfluxDB data found. Sending to InfluxDB..."
 
-      - name: Send report to InfluxDB
-        if: always()
-        run: |
-          if [ -f allure-report/export/influxDbData.txt ]; then
+            # Отправляем данные напрямую в InfluxDB
             curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
               --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
-              --data-binary @allure-report/export/influxDbData.txt
+              --data-binary @"gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt"
+
+            echo "InfluxDB data sent."
           else
-            echo "No data to send to InfluxDB."
+            echo "No InfluxDB data found."
           fi
