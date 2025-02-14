@@ -13,7 +13,7 @@ public class SearchBoxTest extends BaseTest {
                 .gotoSearchBox()
                 .getTitle();
 
-        Assert.assertEquals(title, "Search Box");
+        Assert.assertEquals(title, "Command Palette");
     }
 
     @Test
@@ -22,7 +22,7 @@ public class SearchBoxTest extends BaseTest {
                 .gotoSearchBox()
                 .getTitle();
 
-        Assert.assertEquals(title, "Search Box");
+        Assert.assertEquals(title, "Command Palette");
     }
 
 }
