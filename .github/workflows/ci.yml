@@ -76,23 +76,6 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
-      - name: Copy Allure export data from history
-        if: always()
-        run: |
-          mkdir -p allure-report/export
-          cp -r allure-history/export/* allure-report/export/ || echo "No export data found"
-
-      - name: Send report to InfluxDB
-        if: always()
-        run: |
-          if [ -f allure-report/export/influxDbData.txt ]; then
-            curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
-              --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
-              --data-binary @allure-report/export/influxDbData.txt
-          else
-            echo "No influxDbData.txt found, skipping InfluxDB upload"
-          fi
-
       - name: Queue deployment
         uses: softprops/turnstyle@v1
         with:
@@ -108,3 +91,30 @@ jobs:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: allure-history
+
+      - name: Get latest run ID from gh-pages
+        run: |
+          LATEST_RUN_ID=$(ls -1 gh-pages | sort -n | tail -1)
+          echo "LATEST_RUN_ID=$LATEST_RUN_ID" >> $GITHUB_ENV
+
+      - name: Download InfluxDB data from GitHub Pages
+        if: always()
+        run: |
+          mkdir -p allure-report/export
+          if [ -f "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" ]; then
+            cp "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" allure-report/export/influxDbData.txt
+            echo "InfluxDB data copied."
+          else
+            echo "No InfluxDB data found."
+          fi
+
+      - name: Send report to InfluxDB
+        if: always()
+        run: |
+          if [ -f allure-report/export/influxDbData.txt ]; then
+            curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=s" \
+              --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
+              --data-binary @allure-report/export/influxDbData.txt
+          else
+            echo "No data to send to InfluxDB."
+          fi
