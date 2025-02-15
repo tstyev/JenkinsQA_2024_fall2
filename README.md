@@ -8,14 +8,15 @@
 > Jenkins is an automation tool designed for Continuous Integration (CI) and Continuous Deployment (CD). It allows automatic execution of build, testing, and deployment processes whenever code changes are made in the repository.
 
 ##  Content:
+
 - <a href="#cases"> Test documentation</a>
 - <a href="#settings"> Settings</a>
 - <a href="#autotests"> Running Tests Locally</a>
-- <a href="#jenkins"> Сборка в Jenkins</a>
 - <a href="#allureReport"> Пример Allure-отчета</a>
 - <a href="#tg"> Уведомления в Telegram с использованием бота</a>
 
 ## Tech Stack
+
 <p align="center">
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white"/>
   <img src="https://img.shields.io/badge/TestNG-FF8C00?style=for-the-badge&logo=testng&logoColor=white"/>
@@ -32,12 +33,14 @@
 ____
 <a id="cases"></a>
 ## ️ Test documentation
+
 - [📊 Feature Matrix](https://docs.google.com/spreadsheets/d/11v5GXk0FmRQh8te88jC_ygIHz88kpFgUvTIgDxOT1ZY/edit?gid=1912652394)
 - [📋 Project Board](https://github.com/orgs/RedRoverSchool/projects/3)
 
 ____
 <a id="settings"></a>
 ## ️ Settings
+
 To configure the project locally, follow these steps:
 
 1. **Run Jenkins locally**
@@ -52,6 +55,7 @@ To configure the project locally, follow these steps:
 After completing these steps, your project should be ready to use! 🚀
 
 ____
+<a id="autotests"></a>
 ## Running Tests Locally
 
 To run automated tests locally, use the following commands:
@@ -66,20 +70,34 @@ To run automated tests locally, use the following commands:
       - ```mvn clean test -Dsurefire.suiteXmlFiles=suite/<suite-name>```
       Replace <suite-name> with the actual suite file name.
 
----
-<a id="jenkins"></a>
-## <img width="20" style="vertical-align:middle" title="Jenkins" src="media/logo/jenkins.svg"> </a> Сборка в <a target="_blank" href="https://jenkins.autotests.cloud/job/chitai-gorod-tests/"> Jenkins </a>
-Для доступа в Jenkins необходима регистрация на ресурсе [Jenkins](https://jenkins.autotests.cloud/) Для запуска сборки необходимо перейти в раздел <code>Build with parameters</code>, выбрать необходимые параметры и нажать кнопку <code>Build</code>.
-<p align="center">
-<img title="jenkins" src="media/screenshots/screenshotsJenkins.png">
-</p>
-После выполнения сборки, в блоке <code>Build History</code> напротив номера сборки появятся значки <code>Allure Report</code>, при клике на которые откроется страница с сформированным html-отчетом.
+4. **Run tests in a Docker Container:**
+   - Using Dockerfile
+     - **Build the Docker image:**
+     `docker build -t img-fall-2024 .`
+     `-t img-fall-2024` – assigns a name to the image.
+     `.` (dot) – specifies that the image is built from the current directory.
+     - **Run the container:**
+     `docker run --rm --name my-container img-fall-2024` 
+     `--rm` – removes the container after execution.
+     `--name my-container` – assigns a name to the container.
+     `img-fall-2024` – specifies the image to use for the container.
+   - Using Docker Compose
+     - **Start the container:**
+     `docker-compose up `
+     `-d` – runs the containers in the background.
+     - **Stop and remove the container:**
+     `docker-compose down`
+This method automatically handles image mounting and container execution. 🚀
 
 ____
 <a id="allureReport"></a>
-## <img width="30" style="vertical-align:middle" title="Allure Report" src="media/logo/allure.svg"> </a> Пример <a target="_blank" href="https://jenkins.autotests.cloud/job/chitai-gorod-tests/8/allure/"> Allure-отчета </a>
+## Allure Report Example
+
+## <img width="30" style="vertical-align:middle" title="Allure Report" src="media/allure.svg">
+Example of the [Allure Report](https://redroverschool.github.io/JenkinsQA_2024_fall/2812/)
+
 <p align="center">
-<img title="Allure Report" src="media/screenshots/screenshotsAllure.png">
+  <img title="Allure Report" src="media/allure-report.png">
 </p>
 
 ____
