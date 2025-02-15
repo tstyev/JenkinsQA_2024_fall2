@@ -85,8 +85,10 @@ public abstract class BaseTest {
     }
 
     @BeforeMethod
-    protected void beforeMethod(Method method) {
+    protected void beforeMethod(Method method, ITestResult result) {
         ProjectUtils.logf("Run %s.%s", this.getClass().getName(), method.getName());
+        String testName = result.getMethod().getMethodName();
+        InfluxDBClient.sendMetric(testName, "running");
         try {
             if (!methodsOrder.isGroupStarted(method) || methodsOrder.isGroupFinished(method)) {
                 clearData();
@@ -107,6 +109,14 @@ public abstract class BaseTest {
 
     @AfterMethod
     protected void afterMethod(Method method, ITestResult testResult) {
+        String testName = testResult.getMethod().getMethodName();
+        String status = switch (testResult.getStatus()) {
+            case ITestResult.SUCCESS -> "passed";
+            case ITestResult.FAILURE -> "failed";
+            case ITestResult.SKIP -> "skipped";
+            default -> "unknown";
+        };
+        InfluxDBClient.sendMetric(testName, status);
         if (!testResult.isSuccess() && ProjectUtils.isServerRun()) {
             ProjectUtils.takeScreenshot(getDriver(), testResult.getTestClass().getRealClass().getSimpleName(), testResult.getName());
         }
