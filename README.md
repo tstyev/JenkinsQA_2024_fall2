@@ -56,16 +56,13 @@ ____
 
 To run automated tests locally, use the following commands:
 
-- **Run all tests:**
-
-```mvn test```
-- **Run specific tests:**
-
-```mvn test -Dtest=TestName```
-- **Run a specific test suite:**
-
-```mvn clean test -Dsurefire.suiteXmlFiles=suite/<suite-name>```
-Replace <suite-name> with the actual suite file name.
+1 **Run all tests:**
+   - ```mvn test```
+2 **Run specific tests:**
+   - ```mvn test -Dtest=TestName```
+3 **Run a specific test suite:**
+   - ```mvn clean test -Dsurefire.suiteXmlFiles=suite/<suite-name>```
+   Replace <suite-name> with the actual suite file name.
 
 ---
 <a id="jenkins"></a>
