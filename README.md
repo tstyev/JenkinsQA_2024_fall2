@@ -1,7 +1,10 @@
 # JenkinsQA_2024_fall
 
 <h1 align="center">Project for Testing the CI/CD Tool Jenkins</h1>
-<div style="text-align: center;"><img src="media/jenkins.svg" alt="Jenkins logo"></div>
+<p align="center">
+  <img src="media/jenkins.svg" alt="Jenkins logo" width="150"/>
+</p>
+
 
 > Jenkins is an automation tool designed for Continuous Integration (CI) and Continuous Deployment (CD). It allows automatic execution of build, testing, and deployment processes whenever code changes are made in the repository.
 
