@@ -1,11 +1,12 @@
 # JenkinsQA_2024_fall
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/RedRoverSchool/JenkinsQA_2024_fall)
-![GitHub last commit](https://img.shields.io/github/last-commit/RedRoverSchool/JenkinsQA_2024_fall)
-![GitHub contributors](https://img.shields.io/github/contributors/RedRoverSchool/JenkinsQA_2024_fall)
-![CI](https://github.com/RedRoverSchool/JenkinsQA_2024_fall/actions/workflows/ci.yml/badge.svg)
-![GitHub issues](https://img.shields.io/github/issues/RedRoverSchool/JenkinsQA_2024_fall)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/RedRoverSchool/JenkinsQA_2024_fall)
-
+<p align="center">
+    ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/RedRoverSchool/JenkinsQA_2024_fall)
+    ![GitHub last commit](https://img.shields.io/github/last-commit/RedRoverSchool/JenkinsQA_2024_fall)
+    ![GitHub contributors](https://img.shields.io/github/contributors/RedRoverSchool/JenkinsQA_2024_fall)
+    ![CI](https://github.com/RedRoverSchool/JenkinsQA_2024_fall/actions/workflows/ci.yml/badge.svg)
+    ![GitHub issues](https://img.shields.io/github/issues/RedRoverSchool/JenkinsQA_2024_fall)
+    ![GitHub pull requests](https://img.shields.io/github/issues-pr/RedRoverSchool/JenkinsQA_2024_fall)
+</p>
 <h1 align="center">Project for Testing the CI/CD Tool Jenkins</h1>
 <p align="center">
   <img src="media/jenkins.svg" alt="Jenkins logo" width="100"/>
