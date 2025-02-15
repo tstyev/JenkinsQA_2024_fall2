@@ -21,7 +21,6 @@
 - <a href="#autotests"> Running Tests Locally</a>
 - <a href="#allureReport"> Allure Report Example</a>
 - <a href="#tg"> Telegram Bot Notification</a>
-- <a href="#info"> Info</a>
 
 ## Tech Stack
 
