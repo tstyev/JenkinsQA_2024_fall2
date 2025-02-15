@@ -107,6 +107,6 @@ After the build is completed, a bot created in <code>Telegram</code> automatical
 
 <div style="background-color: #18222d">
 <p align="center">
-<img width="40%" title="Telegram Notifications" src="media/tg.png">
+<img width="40%" title="Telegram Notifications" src="media/tg-report.png">
 </p>
 </div>
