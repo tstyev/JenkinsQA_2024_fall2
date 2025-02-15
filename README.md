@@ -13,7 +13,7 @@
 - <a href="#settings"> Settings</a>
 - <a href="#autotests"> Running Tests Locally</a>
 - <a href="#allureReport"> Allure Report Example</a>
-- <a href="#tg"> Notifications in Telegram</a>
+- <a href="#tg"> Telegram Bot Notification</a>
 
 ## Tech Stack
 
@@ -101,9 +101,10 @@ Example of the [Allure Report](https://redroverschool.github.io/JenkinsQA_2024_f
 
 ____
 <a id="tg"></a>
-## <img width="30" style="vertical-align:middle" title="Telegram" src="media/telegram.svg"> Notifications in Telegram
-После завершения сборки, бот, созданный в <code>Telegram</code>, автоматически обрабатывает и отправляет сообщение с отчетом
-о прогоне тестов в [специально настроенный чат](https://t.me/+m0gDb0Dy9ckwZTYy).
+## <img width="30" style="vertical-align:middle" title="Telegram" src="media/telegram.svg"> Telegram Bot Notification
+
+After the build is completed, a bot created in <code>Telegram</code> automatically processes the results and sends a message with the test run report to a [specially configured chat](https://t.me/team_jenkins_2024_fall).
+
 <div style="background-color: #18222d">
 <p align="center">
 <img width="40%" title="Telegram Notifications" src="media/tg.png">
