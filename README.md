@@ -14,6 +14,7 @@
 - <a href="#autotests"> Running Tests Locally</a>
 - <a href="#allureReport"> Allure Report Example</a>
 - <a href="#tg"> Telegram Bot Notification</a>
+- <a href="#info"> Info</a>
 
 ## Tech Stack
 
@@ -110,3 +111,12 @@ After the build is completed, a bot created in <code>Telegram</code> automatical
 <img width="40%" title="Telegram Notifications" src="media/tg-report.png">
 </p>
 </div>
+
+____
+<a id="info"></a>
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/RedRoverSchool/JenkinsQA_2024_fall)
+![GitHub last commit](https://img.shields.io/github/last-commit/RedRoverSchool/JenkinsQA_2024_fall)
+![GitHub contributors](https://img.shields.io/github/contributors/RedRoverSchool/JenkinsQA_2024_fall)
+![CI](https://github.com/RedRoverSchool/JenkinsQA_2024_fall/actions/workflows/ci.yml/badge.svg)
+![GitHub issues](https://img.shields.io/github/issues/RedRoverSchool/JenkinsQA_2024_fall)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/RedRoverSchool/JenkinsQA_2024_fall)
