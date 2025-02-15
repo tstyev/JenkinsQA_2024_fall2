@@ -5,21 +5,17 @@
   <img src="media/jenkins.svg" alt="Jenkins logo" width="100"/>
 </p>
 
-
 > Jenkins is an automation tool designed for Continuous Integration (CI) and Continuous Deployment (CD). It allows automatic execution of build, testing, and deployment processes whenever code changes are made in the repository.
 
-
-
 ##  Content:
-- <a gref="#settings"> Settings</a>
-- <a href="#cases"> Тест-кейсы</a>
-- <a href="#autotests"> Запуск автотестов</a>
+- <a href="#cases"> Test documentation</a>
+- <a href="#settings"> Settings</a>
+- <a href="#autotests"> Running Tests Locally</a>
 - <a href="#jenkins"> Сборка в Jenkins</a>
 - <a href="#allureReport"> Пример Allure-отчета</a>
 - <a href="#tg"> Уведомления в Telegram с использованием бота</a>
 
 ## Tech Stack
-
 <p align="center">
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white"/>
   <img src="https://img.shields.io/badge/TestNG-FF8C00?style=for-the-badge&logo=testng&logoColor=white"/>
@@ -35,16 +31,38 @@
 
 ____
 <a id="cases"></a>
-## 🕵️‍♂️ Тест-кейсы
-Auto:
-- Проверка поиска
-- Проверка добавления продукта
-- Проверка удаления продукта
-- Проверка работы корзины
+## ️ Test documentation
+- [📊 Feature Matrix](https://docs.google.com/spreadsheets/d/11v5GXk0FmRQh8te88jC_ygIHz88kpFgUvTIgDxOT1ZY/edit?gid=1912652394)
+- [📋 Project Board](https://github.com/orgs/RedRoverSchool/projects/3)
 
-<a id="autotests"></a>
 ____
-## ▶️ Запуск автотестов
+<a id="settings"></a>
+## ️ Settings
+To configure the project locally, follow these steps:
+
+1. **Run Jenkins locally**
+    - Install and start Jenkins on your machine.
+    - Ensure all required plugins are installed.
+
+2. **Configure the settings file**
+    - Copy `local.properties.TEMPLATE`.
+    - Rename it to `local.properties` (remove `TEMPLATE`).
+    - Fill in the necessary values with your local configuration.
+
+After completing these steps, your project should be ready to use! 🚀
+
+____
+## Running Tests Locally
+
+To run automated tests locally, use the following commands:
+
+- **Run all tests:**
+  `mvn test`
+- **Run specific tests:**
+  `mvn test -Dtest=TestName`
+- **Run a specific test suite:**
+  `mvn clean test -Dsurefire.suiteXmlFiles=suite/<suite-name>`
+  Replace <suite-name> with the actual suite file name.
 
 ### Запуск тестов из терминала
 
