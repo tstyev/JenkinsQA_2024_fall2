@@ -2,7 +2,7 @@
 
 <h1 align="center">Project for Testing the CI/CD Tool Jenkins</h1>
 <p align="center">
-  <img src="media/jenkins.svg" alt="Jenkins logo" width="150"/>
+  <img src="media/jenkins.svg" alt="Jenkins logo" width="100"/>
 </p>
 
 
