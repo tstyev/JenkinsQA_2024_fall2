@@ -12,8 +12,8 @@
 - <a href="#cases"> Test documentation</a>
 - <a href="#settings"> Settings</a>
 - <a href="#autotests"> Running Tests Locally</a>
-- <a href="#allureReport"> Пример Allure-отчета</a>
-- <a href="#tg"> Уведомления в Telegram с использованием бота</a>
+- <a href="#allureReport"> Allure Report Example</a>
+- <a href="#tg"> Notifications in Telegram</a>
 
 ## Tech Stack
 
@@ -91,9 +91,8 @@ This method automatically handles image mounting and container execution. 🚀
 
 ____
 <a id="allureReport"></a>
-## Allure Report Example
+## <img width="30" style="vertical-align:middle" title="Allure Report" src="media/allure.svg"> Allure Report Example
 
-## <img width="30" style="vertical-align:middle" title="Allure Report" src="media/allure.svg">
 Example of the [Allure Report](https://redroverschool.github.io/JenkinsQA_2024_fall/2812/)
 
 <p align="center">
@@ -102,11 +101,11 @@ Example of the [Allure Report](https://redroverschool.github.io/JenkinsQA_2024_f
 
 ____
 <a id="tg"></a>
-## <img width="30" style="vertical-align:middle" title="Telegram" src="media/logo/telegram.svg"> Уведомления в Telegram с использованием бота
+## <img width="30" style="vertical-align:middle" title="Telegram" src="media/telegram.svg"> Notifications in Telegram
 После завершения сборки, бот, созданный в <code>Telegram</code>, автоматически обрабатывает и отправляет сообщение с отчетом
 о прогоне тестов в [специально настроенный чат](https://t.me/+m0gDb0Dy9ckwZTYy).
 <div style="background-color: #18222d">
 <p align="center">
-<img width="40%" title="Telegram Notifications" src="media/screenshots/screenshotsTelegram.png">
+<img width="40%" title="Telegram Notifications" src="media/tg.png">
 </p>
 </div>
