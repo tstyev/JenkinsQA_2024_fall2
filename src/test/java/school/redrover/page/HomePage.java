@@ -3,9 +3,10 @@ package school.redrover.page;
 import org.openqa.selenium.WebDriver;
 import school.redrover.page.base.BasePage;
 
-public class CredentialsConfigurePage extends BasePage {
+public class HomePage extends BasePage {
 
-    public CredentialsConfigurePage(WebDriver driver) {
+    public HomePage(WebDriver driver) {
         super(driver);
     }
+
 }

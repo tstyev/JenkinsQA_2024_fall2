@@ -14,7 +14,7 @@ import java.util.Properties;
 
 public final class ProjectUtils {
 
-    private static final String PREFIX_PROP = "local.";
+    private static final String PREFIX_PROP = "";
     private static final String PROP_HOST = PREFIX_PROP + "host";
     private static final String PROP_PORT = PREFIX_PROP + "port";
     private static final String PROP_ADMIN_USERNAME = PREFIX_PROP + "admin.username";
