@@ -29,51 +29,51 @@ public final class ProjectUtils {
         throw new UnsupportedOperationException();
     }
 
-    private static void initProperties() {
-        if (properties == null) {
-            properties = new Properties();
-            try (InputStream inputStream = ProjectUtils.class.getClassLoader().getResourceAsStream("local.properties")) {
-                if (inputStream != null) {
-                    properties.load(inputStream);
-                } else {
-                    try (InputStream fallback = ProjectUtils.class.getClassLoader().getResourceAsStream("test.properties")) {
-                        if (fallback != null) {
-                            properties.load(fallback);
-                        } else {
-                            log("No local.properties or test.properties found!");
-                            System.exit(1);
-                        }
+    private static void replaceEnvVariablesInProperties() {
+        for (String name : properties.stringPropertyNames()) {
+            String value = properties.getProperty(name);
+
+            if (value != null) {
+                if (value.contains("ADMIN_USERNAME")) {
+                    String envValue = System.getenv("ADMIN_USERNAME");
+                    if (envValue != null) {
+                        value = value.replace("ADMIN_USERNAME", envValue);
                     }
                 }
 
-                replaceEnvVariablesInProperties();
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load properties file", e);
-            }
-        }
-    }
+                if (value.contains("ADMIN_PASSWORD")) {
+                    String envValue = System.getenv("ADMIN_PASSWORD");
+                    if (envValue != null) {
+                        value = value.replace("ADMIN_PASSWORD", envValue);
+                    }
+                }
 
-    private static void replaceEnvVariablesInProperties() {
-        Pattern envPattern = Pattern.compile("\\$\\{([A-Z0-9_]+)}");
-
-        for (String name : properties.stringPropertyNames()) {
-            String value = properties.getProperty(name);
-            Matcher matcher = envPattern.matcher(value);
-            StringBuilder resolved = new StringBuilder();
-            while (matcher.find()) {
-                String envVar = matcher.group(1);
-                String envValue = System.getenv(envVar);
-                matcher.appendReplacement(resolved, envValue != null ? Matcher.quoteReplacement(envValue) : "");
+                properties.setProperty(name, value);
             }
-            matcher.appendTail(resolved);
-            properties.setProperty(name, resolved.toString());
         }
     }
 
     static final ChromeOptions chromeOptions;
 
     static {
-        initProperties();
+        properties = new Properties();
+        try (InputStream inputStream = ProjectUtils.class.getClassLoader().getResourceAsStream("local.properties")) {
+            if (inputStream != null) {
+                properties.load(inputStream);
+            } else {
+                try (InputStream fallback = ProjectUtils.class.getClassLoader().getResourceAsStream("test.properties")) {
+                    if (fallback != null) {
+                        properties.load(fallback);
+                    } else {
+                        log("No local.properties or test.properties found!");
+                        System.exit(1);
+                    }
+                }
+            }
+            replaceEnvVariablesInProperties();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load properties file", e);
+        }
 
         chromeOptions = new ChromeOptions();
         String options = properties.getProperty(PROP_CHROME_OPTIONS);

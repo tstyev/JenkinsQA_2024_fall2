@@ -94,24 +94,3 @@ jobs:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: allure-history
-
-      - name: Get latest run ID from gh-pages
-        run: |
-          LATEST_RUN_ID=$(ls -1 gh-pages | sort -n | tail -1)
-          echo "LATEST_RUN_ID=$LATEST_RUN_ID" >> $GITHUB_ENV
-
-      - name: Send InfluxDB data to InfluxDB
-        if: always()
-        run: |
-          echo "Checking if InfluxDB data exists on GitHub Pages..."
-          if [ -f "gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt" ]; then
-            echo "InfluxDB data found. Sending to InfluxDB..."
-
-            curl -XPOST "http://a2657cf0c126.vps.myjino.ru:49169/api/v2/write?org=my-org&bucket=allure_bucket&precision=ns" \
-              --header "Authorization: Token ${{ secrets.INFLUXDB_TOKEN }}" \
-              --data-binary @"gh-pages/${{ env.LATEST_RUN_ID }}/export/influxDbData.txt"
-
-            echo "InfluxDB data sent."
-          else
-            echo "No InfluxDB data found."
-          fi
