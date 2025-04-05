@@ -19,13 +19,11 @@ public final class ProjectUtils {
     private static final String PROP_PORT = PREFIX_PROP + "port";
     private static final String PROP_ADMIN_USERNAME = PREFIX_PROP + "admin.username";
     private static final String PROP_ADMIN_PAS = PREFIX_PROP + "admin.password";
-
+    private static final String PROP_CHROME_OPTIONS = "chrome_options";
     private static final String CLOSE_BROWSER_IF_ERROR = PREFIX_PROP + "closeBrowserIfError";
 
-    private static final String ENV_CHROME_OPTIONS = "CHROME_OPTIONS";
-    private static final String ENV_APP_OPTIONS = "APP_OPTIONS";
-
-    private static final String PROP_CHROME_OPTIONS = PREFIX_PROP + ENV_CHROME_OPTIONS.toLowerCase();
+    private static final String LOCAL_PROPS = "local.properties";
+    private static final String TEST_PROPS = "test.properties";
 
     private static Properties properties;
 
@@ -34,30 +32,34 @@ public final class ProjectUtils {
     }
 
     private static void initProperties() {
-        if (properties == null) {
-            properties = new Properties();
-            if (isServerRun()) {
-                properties.setProperty(PROP_CHROME_OPTIONS, System.getenv(ENV_CHROME_OPTIONS));
+        if (properties != null) return;
 
-                if (System.getenv(ENV_APP_OPTIONS) != null) {
-                    for (String option : System.getenv(ENV_APP_OPTIONS).split(";")) {
-                        String[] optionArr = option.split("=");
-                        properties.setProperty(PREFIX_PROP + optionArr[0], optionArr[1]);
-                    }
-                }
-            } else {
-                try {
-                    InputStream inputStream = ProjectUtils.class.getClassLoader().getResourceAsStream("local.properties");
-                    if (inputStream == null) {
-                        log("The \u001B[31mlocal.properties\u001B[0m file not found in src/test/resources/ directory.");
-                        log("You need to create it from local.properties.TEMPLATE file.");
-                        System.exit(1);
-                    }
-                    properties.load(inputStream);
-                } catch (IOException ignore) {
-                }
+        properties = new Properties();
+
+        try (InputStream stream = getPropsStream()) {
+            if (stream == null) {
+                throw new RuntimeException("Neither local.properties nor test.properties found in resources.");
             }
+            properties.load(stream);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load properties", e);
         }
+    }
+
+    private static InputStream getPropsStream() {
+        InputStream local = ProjectUtils.class.getClassLoader().getResourceAsStream(LOCAL_PROPS);
+        if (local != null) {
+            log("Loaded properties from local.properties");
+            return local;
+        }
+
+        InputStream test = ProjectUtils.class.getClassLoader().getResourceAsStream(TEST_PROPS);
+        if (test != null) {
+            log("Loaded properties from test.properties");
+            return test;
+        }
+
+        return null;
     }
 
     static final ChromeOptions chromeOptions;
