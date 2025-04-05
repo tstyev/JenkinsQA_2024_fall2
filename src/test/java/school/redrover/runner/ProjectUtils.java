@@ -32,37 +32,20 @@ public final class ProjectUtils {
     private static void initProperties() {
         if (properties == null) {
             properties = new Properties();
-
-            // Получаем список всех файлов в ресурсах
-            try {
-                // Пробуем загрузить сначала local.properties
-                InputStream inputStream = ProjectUtils.class.getClassLoader().getResourceAsStream("local.properties");
-
+            try (InputStream inputStream = ProjectUtils.class.getClassLoader().getResourceAsStream("local.properties")) {
                 if (inputStream != null) {
-                    // Если файл найден, загружаем его
                     properties.load(inputStream);
                 } else {
-                    // Если local.properties не найден, ищем файлы с расширением .properties в resources
-                    String path = "src/test/resources"; // Путь к папке с ресурсами
-                    File dir = new File(path);
-                    if (dir.exists() && dir.isDirectory()) {
-                        // Получаем список всех файлов в папке resources
-                        File[] files = dir.listFiles((d, name) -> name.endsWith(".properties"));
-                        if (files != null && files.length > 0) {
-                            // Загружаем первый найденный .properties файл
-                            try (InputStream fallback = new FileInputStream(files[0])) {
-                                properties.load(fallback);
-                            } catch (IOException e) {
-                                throw new RuntimeException("Failed to load the fallback properties file", e);
-                            }
+                    try (InputStream fallback = ProjectUtils.class.getClassLoader().getResourceAsStream("test.properties")) {
+                        if (fallback != null) {
+                            properties.load(fallback);
                         } else {
-                            log("No properties file found in src/test/resources/ directory!");
+                            log("No local.properties or test.properties found!");
                             System.exit(1);
                         }
                     }
                 }
 
-                // Заменяем переменные окружения в пропертях
                 replaceEnvVariablesInProperties();
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load properties file", e);
