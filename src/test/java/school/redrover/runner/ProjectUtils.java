@@ -11,19 +11,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.io.*;
 import java.time.Duration;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class ProjectUtils {
 
-    private static final String PREFIX_PROP = "";
-    private static final String PROP_HOST = PREFIX_PROP + "host";
-    private static final String PROP_PORT = PREFIX_PROP + "port";
-    private static final String PROP_ADMIN_USERNAME = PREFIX_PROP + "admin.username";
-    private static final String PROP_ADMIN_PAS = PREFIX_PROP + "admin.password";
+    private static final String PROP_HOST = "host";
+    private static final String PROP_PORT = "port";
+    private static final String PROP_ADMIN_USERNAME = "admin.username";
+    private static final String PROP_ADMIN_PAS = "admin.password";
     private static final String PROP_CHROME_OPTIONS = "chrome_options";
-    private static final String CLOSE_BROWSER_IF_ERROR = PREFIX_PROP + "closeBrowserIfError";
-
-    private static final String LOCAL_PROPS = "local.properties";
-    private static final String TEST_PROPS = "test.properties";
+    private static final String CLOSE_BROWSER_IF_ERROR = "closeBrowserIfError";
 
     private static Properties properties;
 
@@ -32,34 +30,61 @@ public final class ProjectUtils {
     }
 
     private static void initProperties() {
-        if (properties != null) return;
+        if (properties == null) {
+            properties = new Properties();
 
-        properties = new Properties();
+            // Получаем список всех файлов в ресурсах
+            try {
+                // Пробуем загрузить сначала local.properties
+                InputStream inputStream = ProjectUtils.class.getClassLoader().getResourceAsStream("local.properties");
 
-        try (InputStream stream = getPropsStream()) {
-            if (stream == null) {
-                throw new RuntimeException("Neither local.properties nor test.properties found in resources.");
+                if (inputStream != null) {
+                    // Если файл найден, загружаем его
+                    properties.load(inputStream);
+                } else {
+                    // Если local.properties не найден, ищем файлы с расширением .properties в resources
+                    String path = "src/test/resources"; // Путь к папке с ресурсами
+                    File dir = new File(path);
+                    if (dir.exists() && dir.isDirectory()) {
+                        // Получаем список всех файлов в папке resources
+                        File[] files = dir.listFiles((d, name) -> name.endsWith(".properties"));
+                        if (files != null && files.length > 0) {
+                            // Загружаем первый найденный .properties файл
+                            try (InputStream fallback = new FileInputStream(files[0])) {
+                                properties.load(fallback);
+                            } catch (IOException e) {
+                                throw new RuntimeException("Failed to load the fallback properties file", e);
+                            }
+                        } else {
+                            log("No properties file found in src/test/resources/ directory!");
+                            System.exit(1);
+                        }
+                    }
+                }
+
+                // Заменяем переменные окружения в пропертях
+                replaceEnvVariablesInProperties();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load properties file", e);
             }
-            properties.load(stream);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load properties", e);
         }
     }
 
-    private static InputStream getPropsStream() {
-        InputStream local = ProjectUtils.class.getClassLoader().getResourceAsStream(LOCAL_PROPS);
-        if (local != null) {
-            log("Loaded properties from local.properties");
-            return local;
-        }
+    private static void replaceEnvVariablesInProperties() {
+        Pattern envPattern = Pattern.compile("\\$\\{([A-Z0-9_]+)}");
 
-        InputStream test = ProjectUtils.class.getClassLoader().getResourceAsStream(TEST_PROPS);
-        if (test != null) {
-            log("Loaded properties from test.properties");
-            return test;
+        for (String name : properties.stringPropertyNames()) {
+            String value = properties.getProperty(name);
+            Matcher matcher = envPattern.matcher(value);
+            StringBuilder resolved = new StringBuilder();
+            while (matcher.find()) {
+                String envVar = matcher.group(1);
+                String envValue = System.getenv(envVar);
+                matcher.appendReplacement(resolved, envValue != null ? Matcher.quoteReplacement(envValue) : "");
+            }
+            matcher.appendTail(resolved);
+            properties.setProperty(name, resolved.toString());
         }
-
-        return null;
     }
 
     static final ChromeOptions chromeOptions;
