@@ -86,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish test report
-        if: ${{ success() || failure() }}
         uses: peaceiris/actions-gh-pages@v3
+        if: ${{ success() || failure() }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
