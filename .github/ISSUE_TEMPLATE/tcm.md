@@ -2,7 +2,7 @@
 name: TCM
 about: Мануальный тест-кейс
 title: TC_XX.XXX.XXX | > >
-labels: ''
+labels: TC
 assignees: ''
 
 ---
